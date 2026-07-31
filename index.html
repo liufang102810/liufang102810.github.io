@@ -806,12 +806,14 @@ body {
 <script>
 // ===== GitHub 永久存储配置 =====
 // 数据存储在 GitHub 仓库中，永久不丢失，多人协同（10秒轮询同步）
+// 注意：raw.githubusercontent.com 在国内被墙，改用 GitHub Pages 同源读取 + GitHub API 写入
 const GH_TOKEN = atob('Z2hwX1BzNFVuUUxFMHpaazNYUjdLRjlmNnBNSnV3aTMwTlZRVA==');
 const GH_OWNER = 'liufang102810';
 const GH_REPO = 'liufang102810.github.io';
 const GH_DATA_FILE = 'board-data.json';
 const GH_API_URL = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_DATA_FILE}`;
-const GH_RAW_URL = `https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/main/${GH_DATA_FILE}`;
+// 读取用 GitHub Pages 同源 URL（国内可访问，无 CORS 问题）
+const GH_READ_URL = `https://${GH_REPO}/${GH_DATA_FILE}`;
 
 // ===== State =====
 let cloudData = { boardName: '团队日清看板', members: [], items: [], reviews: [], errors: [], lastUpdate: null, updatedBy: null };
@@ -821,9 +823,20 @@ let currentUser = localStorage.getItem('board_current_user') || '';
 
 // ===== GitHub Cloud API =====
 async function cloudRead() {
-  const res = await fetch(GH_RAW_URL + '?t=' + Date.now(), { headers: { 'Accept': 'application/json' } });
-  if (!res.ok) throw new Error('读取失败: ' + res.status);
-  return await res.json();
+  // 优先用 GitHub Pages 同源读取（快速，国内可访问）
+  try {
+    const res = await fetch(GH_READ_URL + '?t=' + Date.now(), { cache: 'no-store' });
+    if (res.ok) return await res.json();
+  } catch(e) { /* fallback to API */ }
+  // 备选：通过 GitHub API 读取（绕过 CDN 缓存，获取最新数据）
+  const resp = await fetch(GH_API_URL, {
+    headers: { 'Authorization': `token ${GH_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' }
+  });
+  if (!resp.ok) throw new Error('读取失败: ' + resp.status);
+  const info = await resp.json();
+  // API 返回 base64 编码的内容，需要解码
+  const content = decodeURIComponent(escape(atob(info.content.replace(/\n/g, ''))));
+  return JSON.parse(content);
 }
 
 async function cloudWrite(data) {
