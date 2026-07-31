@@ -864,6 +864,7 @@ function startRealtimeListener() {
         if (!cloudData.members) cloudData.members = [];
         if (!cloudData.reviews) cloudData.reviews = [];
         if (!cloudData.errors) cloudData.errors = [];
+        delete cloudData.auth; // 清理旧的权限控制数据
         document.getElementById('boardTitle').textContent = cloudData.boardName || '团队日清看板';
         document.title = cloudData.boardName || '团队日清看板';
         renderStats();
@@ -895,6 +896,7 @@ async function loadData() {
     if (!cloudData.members) cloudData.members = [];
     if (!cloudData.reviews) cloudData.reviews = [];
     if (!cloudData.errors) cloudData.errors = [];
+    delete cloudData.auth; // 清理旧的权限控制数据
     // 首次使用：如果数据库为空（无 boardName），初始化默认看板并写回 Firebase
     if (!cloudData.boardName) {
       cloudData.boardName = '刘芳律师团队日程看板';
