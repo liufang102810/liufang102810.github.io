@@ -513,13 +513,114 @@ body.auth-locked .toolbar .filters { opacity: 1; }
 .auth-field .hint { font-size: 12px; color: var(--text-light); margin-top: 3px; }
 .auth-save-btn { padding: 8px 20px; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; }
 .auth-save-btn:hover { opacity: 0.9; }
+
+/* ===== Overdue Banner ===== */
+.overdue-banner {
+  margin: 0 32px 16px; background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 1px solid #fecaca; border-left: 4px solid var(--urgent);
+  border-radius: var(--radius); padding: 14px 20px; display: none;
+  animation: slideDown 0.3s ease;
+}
+@keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+.overdue-banner.show { display: block; }
+.overdue-banner-header { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; color: var(--urgent); margin-bottom: 8px; }
+.overdue-banner-header .count-badge { background: var(--urgent); color: white; padding: 2px 10px; border-radius: 12px; font-size: 12px; }
+.overdue-banner-list { display: flex; flex-direction: column; gap: 6px; }
+.overdue-banner-item { font-size: 13px; color: #991b1b; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.overdue-banner-item .item-title { font-weight: 600; }
+.overdue-banner-item .item-meta { font-size: 12px; color: var(--text-light); }
+
+/* ===== Case Type Tag ===== */
+.case-type-tag {
+  display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 5px;
+  font-weight: 600; letter-spacing: 0.2px; white-space: nowrap;
+}
+.case-type-tag.诉讼案件 { background: #ede9fe; color: #6d28d9; }
+.case-type-tag.非诉业务 { background: #dbeafe; color: #1d4ed8; }
+.case-type-tag.合同审查 { background: #fef3c7; color: #92400e; }
+.case-type-tag.法律顾问 { background: #d1fae5; color: #047857; }
+.case-type-tag.咨询接待 { background: #fce7f3; color: #be185d; }
+.case-type-tag.其他 { background: #f1f5f9; color: #475569; }
+
+/* ===== Card overdue red bar ===== */
+.card.overdue-card { border-left-color: var(--urgent) !important; box-shadow: 0 0 0 1px #fecaca, var(--shadow-xs); }
+.card.overdue-card .card-due.overdue { background: var(--urgent); color: white; padding: 2px 8px; border-radius: 6px; }
+
+/* ===== Calendar View ===== */
+.calendar-view { padding: 0 32px 32px; }
+.calendar-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+.calendar-nav { display: flex; align-items: center; gap: 12px; }
+.calendar-nav button {
+  width: 36px; height: 36px; border: 1px solid var(--border); border-radius: 9px;
+  background: var(--card-bg); cursor: pointer; font-size: 16px; color: var(--text-mid);
+  transition: all 0.2s; display: flex; align-items: center; justify-content: center;
+}
+.calendar-nav button:hover { background: var(--primary); color: white; border-color: var(--primary); }
+.calendar-nav .cal-title { font-size: 18px; font-weight: 700; color: var(--text); min-width: 140px; text-align: center; }
+.calendar-today-btn {
+  padding: 7px 16px; border: 1px solid var(--border); border-radius: 9px; background: var(--card-bg);
+  cursor: pointer; font-size: 13px; color: var(--text-mid); font-weight: 500; transition: all 0.2s;
+}
+.calendar-today-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
+.calendar-legend { display: flex; gap: 14px; font-size: 12px; color: var(--text-light); }
+.calendar-legend .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; margin-right: 4px; }
+.calendar-legend .dot.red { background: var(--urgent); }
+.calendar-legend .dot.orange { background: var(--important); }
+.calendar-legend .dot.green { background: var(--done-border); }
+.calendar-grid { background: var(--card-bg); border-radius: var(--radius-lg); box-shadow: var(--shadow); overflow: hidden; border: 1px solid var(--border-soft); }
+.calendar-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); border-bottom: 2px solid var(--border); }
+.calendar-weekday { padding: 10px 6px; text-align: center; font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; }
+.calendar-weekday.weekend { color: var(--urgent); }
+.calendar-body { display: grid; grid-template-columns: repeat(7, 1fr); }
+.calendar-cell {
+  min-height: 100px; border-right: 1px solid var(--border-soft); border-bottom: 1px solid var(--border-soft);
+  padding: 6px 6px 4px; position: relative; overflow: hidden; transition: background 0.15s;
+}
+.calendar-cell:nth-child(7n) { border-right: none; }
+.calendar-cell:hover { background: var(--card-bg-soft); }
+.calendar-cell.other-month { background: #f9fafb; opacity: 0.5; }
+.calendar-cell.today .cal-day-num { background: var(--primary); color: white; }
+.calendar-day-num {
+  display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px;
+  border-radius: 50%; font-size: 13px; font-weight: 700; color: var(--text-mid); margin-bottom: 4px;
+}
+.calendar-cell.other-month .calendar-day-num { color: var(--text-light); }
+.calendar-cell.today .calendar-day-num { color: white; }
+.cal-item {
+  font-size: 11px; padding: 2px 6px; border-radius: 4px; margin-bottom: 2px; cursor: pointer;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: all 0.15s; border-left: 3px solid;
+}
+.cal-item:hover { transform: translateX(2px); }
+.cal-item.紧急 { border-left-color: var(--urgent); background: #fef2f2; color: #991b1b; }
+.cal-item.重要 { border-left-color: var(--important); background: #fffbeb; color: #92400e; }
+.cal-item.普通 { border-left-color: var(--normal); background: #f8fafc; color: #475569; }
+.cal-item.overdue { background: var(--urgent); color: white; border-left-color: #b91c1c; font-weight: 600; }
+.cal-item.done { opacity: 0.5; text-decoration: line-through; }
+.cal-more { font-size: 10px; color: var(--text-light); text-align: center; padding: 1px; cursor: pointer; }
+.cal-more:hover { color: var(--primary); }
+.calendar-day-detail { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15,23,42,0.4); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 900; }
+.calendar-day-detail.show { display: flex; animation: fadeIn 0.2s ease; }
+.calendar-day-detail .day-detail-box { background: var(--card-bg); border-radius: var(--radius-xl); padding: 24px 28px; width: 90%; max-width: 500px; max-height: 70vh; overflow-y: auto; box-shadow: 0 24px 48px -12px rgba(15,23,42,0.25); }
+.calendar-day-detail .day-detail-header { font-size: 17px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
+.calendar-day-detail .day-detail-close { cursor: pointer; font-size: 22px; color: var(--text-light); line-height: 1; }
+.calendar-day-detail .day-detail-close:hover { color: var(--text); }
+.day-detail-item { padding: 12px 14px; border-radius: var(--radius-sm); margin-bottom: 8px; border-left: 4px solid; background: var(--card-bg-soft); }
+.day-detail-item.紧急 { border-left-color: var(--urgent); }
+.day-detail-item.重要 { border-left-color: var(--important); }
+.day-detail-item.普通 { border-left-color: var(--normal); }
+.day-detail-item.overdue { border-left-color: var(--urgent); background: #fef2f2; }
+.day-detail-item-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.day-detail-item-meta { font-size: 12px; color: var(--text-light); display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ===== Week stat card ===== */
+.stat-card.week { border-top-color: #8b5cf6; } .stat-card.week .num { color: #8b5cf6; }
 </style>
 </head>
 <body>
 
 <!-- Share Banner -->
 <div class="share-banner">
-  <span class="share-text">🔗 团队协同看板 — Firebase 永久存储 + 实时秒级同步</span>
+  <span class="share-text">🔗 刘芳律师团队日程看板 — 多人实时协同 · 案件类型 / 日历视图 / 逾期预警</span>
   <button class="share-link" onclick="copyShareLink()">复制分享链接</button>
 </div>
 
@@ -536,6 +637,9 @@ body.auth-locked .toolbar .filters { opacity: 1; }
 
 <div class="stats-bar" id="statsBar"></div>
 
+<!-- Overdue Banner -->
+<div class="overdue-banner" id="overdueBanner"></div>
+
 <div class="quick-add">
   <input type="text" id="quickTitle" placeholder="快速添加事项（如：明天下午3点 @刘芳律师 紧急处理合同纠纷）" onkeydown="if(event.key==='Enter')quickAdd()" style="flex:1;min-width:200px;">
   <select id="quickAssignee"><option value="">负责人</option></select>
@@ -543,6 +647,15 @@ body.auth-locked .toolbar .filters { opacity: 1; }
     <option value="普通">普通</option>
     <option value="重要">重要</option>
     <option value="紧急">紧急</option>
+  </select>
+  <select id="quickCaseType">
+    <option value="">类型</option>
+    <option value="诉讼案件">诉讼案件</option>
+    <option value="非诉业务">非诉业务</option>
+    <option value="合同审查">合同审查</option>
+    <option value="法律顾问">法律顾问</option>
+    <option value="咨询接待">咨询接待</option>
+    <option value="其他">其他</option>
   </select>
   <input type="datetime-local" id="quickDue">
   <select id="quickRecorder"><option value="">录入人</option></select>
@@ -552,6 +665,7 @@ body.auth-locked .toolbar .filters { opacity: 1; }
 <div class="toolbar">
   <div class="tabs">
     <button class="tab active" onclick="switchView('board')">看板视图</button>
+    <button class="tab" onclick="switchView('calendar')">日历视图</button>
     <button class="tab" onclick="switchView('list')">列表视图</button>
     <button class="tab" onclick="switchView('member')">成员视图</button>
     <button class="tab" onclick="switchView('review')">每日复盘</button>
@@ -656,6 +770,18 @@ body.auth-locked .toolbar .filters { opacity: 1; }
       </div>
     </div>
     <div class="modal-field">
+      <label>案件类型</label>
+      <select id="editCaseType" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;">
+        <option value="">不指定</option>
+        <option value="诉讼案件">诉讼案件</option>
+        <option value="非诉业务">非诉业务</option>
+        <option value="合同审查">合同审查</option>
+        <option value="法律顾问">法律顾问</option>
+        <option value="咨询接待">咨询接待</option>
+        <option value="其他">其他</option>
+      </select>
+    </div>
+    <div class="modal-field">
       <label>截止时间</label>
       <input type="datetime-local" id="editDue" style="width:100%;">
     </div>
@@ -682,6 +808,17 @@ body.auth-locked .toolbar .filters { opacity: 1; }
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- Calendar Day Detail Popup -->
+<div class="calendar-day-detail" id="calDayDetail">
+  <div class="day-detail-box">
+    <div class="day-detail-header">
+      <span id="calDayDetailTitle">事项</span>
+      <span class="day-detail-close" onclick="closeCalDayDetail()">&times;</span>
+    </div>
+    <div id="calDayDetailContent"></div>
+  </div>
+</div>
 
 <!-- Review Modal (每日复盘) -->
 <div class="modal-overlay" id="reviewModal">
@@ -1038,6 +1175,7 @@ function startRealtimeListener() {
         renderStats();
         updateFilterOptions();
         render();
+        renderOverdueBanner();
         const updateTime = cloudData.lastUpdate ? new Date(cloudData.lastUpdate).toLocaleString('zh-CN') : '未知';
         const updateBy = cloudData.updatedBy || '';
         document.getElementById('lastUpdate').textContent = `更新于 ${updateTime}${updateBy ? ' by ' + updateBy : ''}`;
@@ -1089,6 +1227,7 @@ async function loadData() {
       if (recSel) recSel.value = currentUser;
     }
     render();
+    renderOverdueBanner();
     const updateTime = cloudData.lastUpdate ? new Date(cloudData.lastUpdate).toLocaleString('zh-CN') : '未知';
     const updateBy = cloudData.updatedBy || '';
     document.getElementById('lastUpdate').textContent = `更新于 ${updateTime}${updateBy ? ' by ' + updateBy : ''}`;
@@ -1108,27 +1247,31 @@ function setSyncStatus(type, text) {
 
 function renderStats() {
   const items = cloudData.items || [];
+  const now = new Date();
+  const weekEnd = new Date(now.getTime() + 7 * 86400000);
   const stats = {
     todo: items.filter(i => i.status === '待办').length,
     inProgress: items.filter(i => i.status === '进行中').length,
-    review: items.filter(i => i.status === '需复核').length,
     urgent: items.filter(i => i.priority === '紧急' && i.status !== '已完成').length,
     completed: items.filter(i => i.status === '已完成').length,
     overdue: items.filter(i => {
       if (!i.dueDate || i.status === '已完成') return false;
-      return new Date(i.dueDate) < new Date();
+      return new Date(i.dueDate) < now;
     }).length,
-    total: items.length,
+    weekDue: items.filter(i => {
+      if (!i.dueDate || i.status === '已完成') return false;
+      const d = new Date(i.dueDate);
+      return d >= now && d <= weekEnd;
+    }).length,
   };
   const bar = document.getElementById('statsBar');
   const cards = [
     {cls: 'todo', num: stats.todo, label: '待办'},
     {cls: 'progress', num: stats.inProgress, label: '进行中'},
-    {cls: 'review', num: stats.review, label: '需复核'},
     {cls: 'urgent', num: stats.urgent, label: '紧急待办'},
-    {cls: 'done', num: stats.completed, label: '已完成'},
     {cls: 'overdue', num: stats.overdue, label: '已逾期'},
-    {cls: '', num: stats.total, label: '总事项'},
+    {cls: 'week', num: stats.weekDue, label: '本周到期'},
+    {cls: 'done', num: stats.completed, label: '已完成'},
   ];
   bar.innerHTML = cards.map(c =>
     `<div class="stat-card ${c.cls}"><div class="num">${c.num}</div><div class="label">${c.label}</div></div>`
@@ -1230,6 +1373,7 @@ function openEdit(id) {
   editingId = id;
   document.getElementById('editTitle').value = item.title || '';
   document.getElementById('editPriority').value = item.priority || '普通';
+  document.getElementById('editCaseType').value = item.caseType || '';
   document.getElementById('editNote').value = item.note || '';
   document.getElementById('editStatus').value = item.status || '待办';
   const names = getMemberNames();
@@ -1254,6 +1398,7 @@ async function saveEdit() {
   const title = document.getElementById('editTitle').value.trim();
   const assignee = document.getElementById('editAssignee').value;
   const priority = document.getElementById('editPriority').value;
+  const caseType = document.getElementById('editCaseType').value;
   const dueInput = document.getElementById('editDue').value;
   const note = document.getElementById('editNote').value;
   const newStatus = document.getElementById('editStatus').value;
@@ -1266,6 +1411,7 @@ async function saveEdit() {
   item.title = title;
   item.assignee = assignee;
   item.priority = priority;
+  item.caseType = caseType;
   item.dueDate = dueDate;
   item.note = note;
   // 处理状态变更
@@ -1299,22 +1445,25 @@ function getFilteredItems() {
 // ===== View Switching =====
 function switchView(view) {
   currentView = view;
-  const allViews = ['board','list','member','review','error'];
+  const allViews = ['board','calendar','list','member','review','error'];
   document.querySelectorAll('.tab').forEach((t, i) => {
     t.classList.toggle('active', allViews[i] === view);
   });
-  // 控制工具栏显示：看板/列表/成员显示快速添加和筛选，复盘/经验总结隐藏
+  // 控制工具栏显示：看板/日历/列表/成员显示快速添加和筛选，复盘/经验总结隐藏
   const quickAdd = document.querySelector('.quick-add');
   const toolbar = document.querySelector('.toolbar');
   const statsBar = document.getElementById('statsBar');
+  const overdueBanner = document.getElementById('overdueBanner');
   if (view === 'review' || view === 'error') {
     if (quickAdd) quickAdd.style.display = 'none';
     if (statsBar) statsBar.style.display = 'none';
     if (toolbar) toolbar.style.display = 'none';
+    if (overdueBanner) overdueBanner.style.display = 'none';
   } else {
     if (quickAdd) quickAdd.style.display = '';
     if (statsBar) statsBar.style.display = '';
     if (toolbar) toolbar.style.display = '';
+    renderOverdueBanner();
   }
   render();
 }
@@ -1324,6 +1473,7 @@ function render() {
   const content = document.getElementById('content');
   if (currentView === 'review') { content.innerHTML = renderReview(); return; }
   if (currentView === 'error') { content.innerHTML = renderError(); return; }
+  if (currentView === 'calendar') { content.innerHTML = renderCalendar(); return; }
   const items = getFilteredItems();
   if (items.length === 0 && (cloudData.items || []).length === 0) {
     content.innerHTML = `<div class="empty-state"><div class="big-icon">📝</div><p>暂无事项</p><p class="hint">在上方输入框添加第一条事项，所有人将实时看到</p></div>`;
@@ -1386,6 +1536,8 @@ function cardActions(item) {
 
 function renderCard(item, hideAssignee) {
   const reviewClass = item.status === '需复核' ? 'review-pending' : (item.status === '已完成' ? 'completed' : '');
+  const isOverdue = item.dueDate && item.status !== '已完成' && new Date(item.dueDate) < new Date();
+  const overdueClass = isOverdue ? 'overdue-card' : '';
   let reviewInfo = '';
   if (item.status === '需复核' && item.submittedForReviewAt) {
     const submitTime = new Date(item.submittedForReviewAt).toLocaleString('zh-CN', {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
@@ -1399,10 +1551,12 @@ function renderCard(item, hideAssignee) {
   if (item.reviewComment) {
     reviewComment = `<div class="card-review-comment">💬 复核意见：${esc(item.reviewComment)}</div>`;
   }
-  return `<div class="card priority-${item.priority} ${reviewClass}">
+  const caseTypeTag = item.caseType ? `<span class="case-type-tag ${item.caseType}">${item.caseType}</span>` : '';
+  return `<div class="card priority-${item.priority} ${reviewClass} ${overdueClass}">
     <div class="card-title">${esc(item.title)}</div>
     <div class="card-meta">
       ${priorityTag(item.priority)}
+      ${caseTypeTag}
       ${hideAssignee ? '' : `<span class="card-assignee">@${esc(item.assignee)}</span>`}
       ${recorderTag(item)}
       ${dueInfo(item.dueDate, item.status)}
@@ -1491,6 +1645,7 @@ function renderList(items) {
       <div class="date-group-header">📅 ${header} <span class="date-count">${groupItems.length} 项</span></div>
       ${groupItems.map(i => `<div class="list-item priority-${i.priority} ${i.status === '已完成' ? 'completed' : ''}">
         ${priorityTag(i.priority)}
+        ${i.caseType ? `<span class="case-type-tag ${i.caseType}">${i.caseType}</span>` : ''}
         <span class="card-assignee">@${esc(i.assignee)}</span>
         ${i.recorder ? `<span class="card-recorder">✎ ${esc(i.recorder)}</span>` : ''}
         <span class="list-item-title">${esc(i.title)}</span>
@@ -1561,7 +1716,165 @@ function renderMember(items) {
   }).join('')}</div>`;
 }
 
-// ===== Review (每日复盘) =====
+// ===== Overdue Banner =====
+function renderOverdueBanner() {
+  const banner = document.getElementById('overdueBanner');
+  if (!banner) return;
+  if (currentView === 'review' || currentView === 'error') { banner.classList.remove('show'); return; }
+  const now = new Date();
+  const overdueItems = (cloudData.items || []).filter(i => i.dueDate && i.status !== '已完成' && new Date(i.dueDate) < now);
+  if (overdueItems.length === 0) { banner.classList.remove('show'); return; }
+  banner.classList.add('show');
+  const listHTML = overdueItems.slice(0, 5).map(i => {
+    const diffDays = Math.floor((now - new Date(i.dueDate)) / 86400000);
+    return `<div class="overdue-banner-item">
+      <span class="item-title">⚠ ${esc(i.title)}</span>
+      <span class="item-meta">@${esc(i.assignee)} · 逾期${diffDays > 0 ? diffDays + '天' : '今日'}</span>
+    </div>`;
+  }).join('');
+  const moreText = overdueItems.length > 5 ? `<div class="overdue-banner-item" style="color:var(--text-light);">还有 ${overdueItems.length - 5} 项逾期...</div>` : '';
+  banner.innerHTML = `<div class="overdue-banner-header">🚨 逾期预警 <span class="count-badge">${overdueItems.length}</span> <span style="font-weight:400;font-size:12px;">以下事项已超过截止时间，请尽快处理</span></div><div class="overdue-banner-list">${listHTML}${moreText}</div>`;
+}
+
+// ===== Calendar View =====
+let calCurrentDate = new Date();
+
+function renderCalendar() {
+  const items = cloudData.items || [];
+  const year = calCurrentDate.getFullYear();
+  const month = calCurrentDate.getMonth();
+  const monthNames = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+  const today = new Date();
+  const todayStr = today.toISOString().slice(0, 10);
+
+  // Build items map by date string
+  const itemMap = {};
+  items.forEach(i => {
+    if (!i.dueDate) return;
+    const d = new Date(i.dueDate);
+    const key = d.toISOString().slice(0, 10);
+    if (!itemMap[key]) itemMap[key] = [];
+    itemMap[key].push(i);
+  });
+
+  // Calendar grid
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  const startWeekday = firstDay.getDay(); // 0=Sun
+  const daysInMonth = lastDay.getDate();
+  const prevMonthDays = new Date(year, month, 0).getDate();
+
+  const cells = [];
+  // Previous month trailing days
+  for (let i = startWeekday - 1; i >= 0; i--) {
+    const day = prevMonthDays - i;
+    const d = new Date(year, month - 1, day);
+    cells.push({ date: d, otherMonth: true });
+  }
+  // Current month days
+  for (let day = 1; day <= daysInMonth; day++) {
+    cells.push({ date: new Date(year, month, day), otherMonth: false });
+  }
+  // Next month leading days to fill 6 rows
+  const remaining = 42 - cells.length;
+  for (let day = 1; day <= remaining; day++) {
+    cells.push({ date: new Date(year, month + 1, day), otherMonth: true });
+  }
+
+  const weekdays = ['日','一','二','三','四','五','六'];
+  const weekdayHTML = weekdays.map((w, i) => `<div class="calendar-weekday${i === 0 || i === 6 ? ' weekend' : ''}">${w}</div>`).join('');
+
+  const cellsHTML = cells.map(cell => {
+    const dateStr = cell.date.toISOString().slice(0, 10);
+    const isToday = dateStr === todayStr;
+    const dayItems = itemMap[dateStr] || [];
+    const now = new Date();
+    const dayItemHTML = dayItems.slice(0, 3).map(i => {
+      const isOverdue = i.status !== '已完成' && new Date(i.dueDate) < now;
+      const cls = isOverdue ? 'overdue' : (i.status === '已完成' ? 'done' : i.priority);
+      const time = cell.date.toDateString() === new Date(i.dueDate).toDateString()
+        ? ' ' + new Date(i.dueDate).getHours().toString().padStart(2,'0') + ':' + new Date(i.dueDate).getMinutes().toString().padStart(2,'0') : '';
+      return `<div class="cal-item ${cls}" onclick="openCalDayDetail('${dateStr}')" title="${esc(i.title)}">${esc(i.title)}${time}</div>`;
+    }).join('');
+    const moreHTML = dayItems.length > 3 ? `<div class="cal-more" onclick="openCalDayDetail('${dateStr}')">+${dayItems.length - 3} 更多</div>` : '';
+    return `<div class="calendar-cell${cell.otherMonth ? ' other-month' : ''}${isToday ? ' today' : ''}">
+      <div class="calendar-day-num">${cell.date.getDate()}</div>
+      ${dayItemHTML}${moreHTML}
+    </div>`;
+  }).join('');
+
+  return `<div class="calendar-view">
+    <div class="calendar-header">
+      <div class="calendar-nav">
+        <button onclick="calPrevMonth()">‹</button>
+        <span class="cal-title">${year}年 ${monthNames[month]}</span>
+        <button onclick="calNextMonth()">›</button>
+      </div>
+      <button class="calendar-today-btn" onclick="calGoToday()">今天</button>
+      <div class="calendar-legend">
+        <span><span class="dot red"></span>逾期</span>
+        <span><span class="dot orange"></span>紧急</span>
+        <span><span class="dot green"></span>已完成</span>
+      </div>
+    </div>
+    <div class="calendar-grid">
+      <div class="calendar-weekdays">${weekdayHTML}</div>
+      <div class="calendar-body">${cellsHTML}</div>
+    </div>
+  </div>`;
+}
+
+function calPrevMonth() { calCurrentDate.setMonth(calCurrentDate.getMonth() - 1); render(); }
+function calNextMonth() { calCurrentDate.setMonth(calCurrentDate.getMonth() + 1); render(); }
+function calGoToday() { calCurrentDate = new Date(); render(); }
+
+function openCalDayDetail(dateStr) {
+  const items = (cloudData.items || []).filter(i => {
+    if (!i.dueDate) return false;
+    return new Date(i.dueDate).toISOString().slice(0, 10) === dateStr;
+  });
+  const d = new Date(dateStr);
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const diffDays = Math.round((new Date(d.getFullYear(), d.getMonth(), d.getDate()) - today) / 86400000);
+  let header = `${d.getMonth()+1}月${d.getDate()}日`;
+  if (diffDays === 0) header = '今天 · ' + header;
+  else if (diffDays === 1) header = '明天 · ' + header;
+  else if (diffDays === -1) header = '昨天 · ' + header;
+  else if (diffDays < -1) header = `逾期${-diffDays}天 · ` + header;
+  document.getElementById('calDayDetailTitle').textContent = header + `（${items.length}项）`;
+  const now2 = new Date();
+  const contentHTML = items.length > 0 ? items.map(i => {
+    const isOverdue = i.status !== '已完成' && new Date(i.dueDate) < now2;
+    const cls = isOverdue ? 'overdue' : i.priority;
+    const time = new Date(i.dueDate).getHours().toString().padStart(2,'0') + ':' + new Date(i.dueDate).getMinutes().toString().padStart(2,'0');
+    const caseTypeTag = i.caseType ? `<span class="case-type-tag ${i.caseType}">${i.caseType}</span>` : '';
+    return `<div class="day-detail-item ${cls}">
+      <div class="day-detail-item-title">${esc(i.title)}</div>
+      <div class="day-detail-item-meta">
+        ${priorityTag(i.priority)}
+        ${caseTypeTag}
+        <span class="card-assignee">@${esc(i.assignee)}</span>
+        <span>⏰ ${time}</span>
+        <span style="color:${i.status === '需复核' ? 'var(--review-border)' : i.status === '已完成' ? 'var(--done-border)' : 'var(--text-light)'};font-weight:600;">[${i.status}]</span>
+      </div>
+      <div class="card-actions" style="margin-top:8px;">
+        <button onclick="openEdit('${i.id}')">✏ 编辑</button>
+        ${i.status === '待办' ? `<button onclick="updateStatus('${i.id}','进行中')">▶ 开始</button>` : ''}
+        ${i.status === '进行中' ? `<button class="review-btn" onclick="submitForReview('${i.id}')">🔍 提交复核</button>` : ''}
+        ${i.status === '需复核' ? `<button class="approve-btn" onclick="approveReview('${i.id}')">✓ 复核定稿</button>` : ''}
+        ${i.status !== '已完成' ? `<button onclick="updateStatus('${i.id}','已完成')">✓ 完成</button>` : ''}
+        <button class="del" onclick="deleteItem('${i.id}')">🗑 删除</button>
+      </div>
+    </div>`;
+  }).join('') : '<div style="text-align:center;padding:30px;color:var(--text-light);">当日无事项</div>';
+  document.getElementById('calDayDetailContent').innerHTML = contentHTML;
+  document.getElementById('calDayDetail').classList.add('show');
+}
+
+function closeCalDayDetail() {
+  document.getElementById('calDayDetail').classList.remove('show');
+}
 let editingReviewId = null;
 const MOOD_MAP = { good: {label:'😊 顺利/有收获', cls:'good'}, normal: {label:'😐 一般', cls:'normal'}, bad: {label:'😣 遇到困难', cls:'bad'} };
 
@@ -1802,6 +2115,7 @@ async function quickAdd() {
   const title = document.getElementById('quickTitle').value.trim();
   const assignee = document.getElementById('quickAssignee').value;
   const priority = document.getElementById('quickPriority').value;
+  const caseType = document.getElementById('quickCaseType').value;
   const dueInput = document.getElementById('quickDue').value;
   let recorder = document.getElementById('quickRecorder').value;
   if (!title) { showToast('请输入事项标题'); return; }
@@ -1812,6 +2126,7 @@ async function quickAdd() {
   const newItem = {
     id: 'item-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6),
     title, assignee, priority,
+    caseType: caseType || '',
     status: '待办',
     dueDate,
     createdAt: new Date().toISOString(),
@@ -1825,6 +2140,7 @@ async function quickAdd() {
     await cloudWrite(cloudData);
     document.getElementById('quickTitle').value = '';
     document.getElementById('quickDue').value = '';
+    document.getElementById('quickCaseType').value = '';
     showToast('已添加');
     loadData();
   } catch(e) { showToast('添加失败'); setSyncStatus('error', '同步失败'); }
@@ -1940,11 +2256,10 @@ async function deleteItem(id) {
 
 // ===== Share =====
 function copyShareLink() {
-  const url = window.location.href.split('#')[0] + '#blob=' + BLOB_ID;
+  const url = window.location.href.split('#')[0];
   navigator.clipboard.writeText(url).then(() => {
     showToast('链接已复制！发给团队成员即可协同编辑');
   }).catch(() => {
-    // Fallback
     const textarea = document.createElement('textarea');
     textarea.value = url;
     document.body.appendChild(textarea);
