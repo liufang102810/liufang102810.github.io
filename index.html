@@ -451,69 +451,6 @@ body {
 }
 .share-banner .share-link:hover { background: rgba(255,255,255,0.3); transform: translateY(-1px); }
 
-/* ===== Auth ===== */
-.auth-badge {
-  display: inline-flex; align-items: center; gap: 4px; font-size: 12px; padding: 4px 12px;
-  border-radius: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; border: 1.5px solid;
-}
-.auth-badge.viewer { background: #f3f4f6; color: #6b7280; border-color: #d1d5db; }
-.auth-badge.editor { background: #eff6ff; color: #2563eb; border-color: #93c5fd; }
-.auth-badge.admin { background: #fef3c7; color: #92400e; border-color: #fcd34d; }
-.auth-badge:hover { opacity: 0.85; }
-.auth-btn {
-  padding: 5px 14px; border: 1.5px solid var(--border); border-radius: 6px; cursor: pointer;
-  font-size: 13px; font-weight: 600; transition: all 0.2s; background: white; color: var(--text);
-}
-.auth-btn:hover { background: var(--bg); }
-.auth-btn.logout { color: var(--urgent); border-color: #fecaca; }
-.auth-btn.logout:hover { background: #fef2f2; }
-
-/* Login modal */
-.login-box { max-width: 380px; }
-.login-box .login-icon { text-align: center; font-size: 40px; margin-bottom: 8px; }
-.login-box .login-title { text-align: center; font-size: 18px; font-weight: 700; margin-bottom: 4px; }
-.login-box .login-desc { text-align: center; font-size: 13px; color: var(--text-light); margin-bottom: 20px; }
-.login-box input[type="password"] {
-  width: 100%; padding: 12px 16px; border: 1.5px solid var(--border); border-radius: 8px;
-  font-size: 15px; outline: none; transition: border-color 0.2s; margin-bottom: 12px;
-}
-.login-box input[type="password"]:focus { border-color: var(--primary); }
-.login-box .login-hint { font-size: 12px; color: var(--text-light); text-align: center; margin-top: 8px; }
-
-/* Locked state */
-body.auth-locked .quick-add,
-body.auth-locked .card-actions,
-body.auth-locked .list-item-actions,
-body.auth-locked .error-actions,
-body.auth-locked .review-add-btn,
-body.auth-locked .error-add-btn,
-body.auth-locked .member-task-chip button { display: none !important; }
-body.auth-locked .card:hover { transform: none !important; }
-body.auth-locked .toolbar .filters { opacity: 1; }
-
-/* Settings auth section */
-.auth-section { border-top: 1px solid var(--border); padding-top: 16px; margin-top: 16px; }
-.auth-section h3 { font-size: 15px; font-weight: 700; margin-bottom: 12px; color: var(--text); }
-.auth-section .auth-status-box {
-  padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 12px;
-}
-.auth-section .auth-status-box.on { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
-.auth-section .auth-status-box.off { background: #f9fafb; color: var(--text-light); border: 1px solid var(--border); }
-.auth-toggle-btn {
-  padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px;
-  font-weight: 600; transition: opacity 0.2s; margin-bottom: 12px;
-}
-.auth-toggle-btn.enable { background: #ef4444; color: white; }
-.auth-toggle-btn.disable { background: #6b7280; color: white; }
-.auth-toggle-btn:hover { opacity: 0.9; }
-.auth-field { margin-bottom: 12px; }
-.auth-field label { font-size: 13px; font-weight: 600; display: block; margin-bottom: 4px; }
-.auth-field input { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; }
-.auth-field input:focus { border-color: var(--primary); }
-.auth-field .hint { font-size: 12px; color: var(--text-light); margin-top: 3px; }
-.auth-save-btn { padding: 8px 20px; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; }
-.auth-save-btn:hover { opacity: 0.9; }
-
 /* ===== Overdue Banner ===== */
 .overdue-banner {
   margin: 0 32px 16px; background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
@@ -629,7 +566,6 @@ body.auth-locked .toolbar .filters { opacity: 1; }
   <div class="header-right">
     <span class="sync-status" id="syncStatus">同步中...</span>
     <span id="lastUpdate">加载中...</span>
-    <span class="auth-badge viewer" id="authBadge" onclick="openLogin()" title="点击解锁编辑权限">👁 访客模式</span>
     <button class="refresh-btn" onclick="loadData()">↻ 刷新</button>
     <button class="settings-btn" onclick="openSettings()">⚙ 设置</button>
   </div>
@@ -686,21 +622,6 @@ body.auth-locked .toolbar .filters { opacity: 1; }
 
 <div id="content"></div>
 
-<!-- Login Modal -->
-<div class="modal-overlay" id="loginModal">
-  <div class="modal login-box">
-    <div class="login-icon">🔐</div>
-    <div class="login-title">解锁编辑权限</div>
-    <div class="login-desc">当前为访客模式，仅可查看<br>输入密码解锁编辑功能</div>
-    <input type="password" id="loginPassword" placeholder="请输入编辑密码" onkeydown="if(event.key==='Enter')doLogin()">
-    <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeLogin()">取消</button>
-      <button class="btn-save" onclick="doLogin()">解锁</button>
-    </div>
-    <div class="login-hint">密码由看板管理员分发，联系管理员获取</div>
-  </div>
-</div>
-
 <!-- Settings Modal -->
 <div class="modal-overlay" id="settingsModal">
   <div class="modal">
@@ -719,30 +640,9 @@ body.auth-locked .toolbar .filters { opacity: 1; }
       <input type="text" id="settingsCurrentUser" placeholder="如：刘芳律师">
       <div class="hint">设置后，新添加的事项会自动填入录入人</div>
     </div>
-    <div id="settingsNonAdminHint" style="display:none;font-size:12px;color:var(--text-light);padding:8px 12px;background:#f9fafb;border-radius:6px;margin-bottom:8px;">💡 看板名称和成员管理需管理员权限，如需修改请联系管理员</div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeSettings()">取消</button>
       <button class="btn-save" onclick="saveSettings()">保存</button>
-    </div>
-
-    <div class="auth-section" id="authSection">
-      <h3>🔒 编辑权限管理 <span style="font-size:12px;font-weight:400;color:var(--text-light);">（仅管理员可见）</span></h3>
-      <div class="auth-status-box off" id="authStatusBox">权限控制未开启 — 所有人可编辑</div>
-      <button class="auth-toggle-btn enable" id="authToggleBtn" onclick="toggleAuth()">开启权限控制</button>
-      <div id="authFields" style="display:none;">
-        <div class="auth-field">
-          <label>管理员密码（你自己的密码，可管理一切）</label>
-          <input type="password" id="authAdminPwd" placeholder="设置管理员密码">
-          <div class="hint">管理员可编辑、管理权限、修改密码</div>
-        </div>
-        <div class="auth-field">
-          <label>编辑密码（分发给团队成员的密码）</label>
-          <input type="password" id="authEditorPwd" placeholder="设置编辑密码">
-          <div class="hint">编辑者可添加/修改/删除事项，但不能管理权限</div>
-        </div>
-        <button class="auth-save-btn" onclick="saveAuthPasswords()">保存密码</button>
-        <div class="hint" style="margin-top:8px;">💡 提示：修改密码后，之前已解锁的人需要重新输入新密码</div>
-      </div>
     </div>
   </div>
 </div>
@@ -921,209 +821,6 @@ let currentView = 'board';
 let isSyncing = false;
 let currentUser = localStorage.getItem('board_current_user') || '';
 
-// ===== Auth =====
-let authLevel = 'viewer'; // 'viewer' | 'editor' | 'admin'
-let authSession = JSON.parse(localStorage.getItem('board_auth_session') || 'null');
-
-function simpleHash(str) {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash;
-  }
-  return 'h' + Math.abs(hash).toString(36);
-}
-
-function isAuthEnabled() {
-  return cloudData.auth && cloudData.auth.enabled === true;
-}
-
-function canEdit() {
-  if (!isAuthEnabled()) return true;
-  return authLevel === 'editor' || authLevel === 'admin';
-}
-
-function canManage() {
-  if (!isAuthEnabled()) return true;
-  return authLevel === 'admin';
-}
-
-function requireEdit() {
-  if (!canEdit()) {
-    showToast('需要编辑权限，请先解锁');
-    openLogin();
-    return false;
-  }
-  return true;
-}
-
-function requireManage() {
-  if (!canManage()) {
-    showToast('需要管理员权限');
-    openLogin();
-    return false;
-  }
-  return true;
-}
-
-function checkAuthSession() {
-  if (!isAuthEnabled()) {
-    authLevel = 'viewer';
-    return;
-  }
-  if (!authSession || !authSession.level) {
-    authLevel = 'viewer';
-    return;
-  }
-  // Session expires after 24 hours
-  const age = Date.now() - (authSession.time || 0);
-  if (age > 24 * 60 * 60 * 1000) {
-    authSession = null;
-    localStorage.removeItem('board_auth_session');
-    authLevel = 'viewer';
-    return;
-  }
-  // Verify the stored password hash still matches
-  const storedHash = authSession.level === 'admin' ? (cloudData.auth?.adminPassword) : (cloudData.auth?.editorPassword);
-  if (authSession.hash !== storedHash) {
-    authSession = null;
-    localStorage.removeItem('board_auth_session');
-    authLevel = 'viewer';
-    return;
-  }
-  authLevel = authSession.level;
-}
-
-function updateAuthUI() {
-  const badge = document.getElementById('authBadge');
-  const body = document.body;
-  if (!isAuthEnabled()) {
-    badge.className = 'auth-badge editor';
-    badge.textContent = '✏ 自由编辑';
-    badge.onclick = null;
-    badge.title = '权限控制未开启，所有人可编辑';
-    body.classList.remove('auth-locked');
-    return;
-  }
-  if (authLevel === 'admin') {
-    badge.className = 'auth-badge admin';
-    badge.textContent = '👑 管理员';
-    badge.onclick = logout;
-    badge.title = '点击退出登录';
-    body.classList.remove('auth-locked');
-  } else if (authLevel === 'editor') {
-    badge.className = 'auth-badge editor';
-    badge.textContent = '✏ 编辑模式';
-    badge.onclick = logout;
-    badge.title = '点击退出登录';
-    body.classList.remove('auth-locked');
-  } else {
-    badge.className = 'auth-badge viewer';
-    badge.textContent = '👁 访客模式';
-    badge.onclick = openLogin;
-    badge.title = '点击解锁编辑权限';
-    body.classList.add('auth-locked');
-  }
-}
-
-function openLogin() {
-  if (!isAuthEnabled()) return;
-  if (authLevel !== 'viewer') return;
-  document.getElementById('loginPassword').value = '';
-  document.getElementById('loginModal').classList.add('show');
-  setTimeout(() => document.getElementById('loginPassword').focus(), 100);
-}
-
-function closeLogin() {
-  document.getElementById('loginModal').classList.remove('show');
-}
-
-function doLogin() {
-  const pwd = document.getElementById('loginPassword').value;
-  if (!pwd) { showToast('请输入密码'); return; }
-  const hash = simpleHash(pwd);
-  if (cloudData.auth && cloudData.auth.adminPassword && hash === cloudData.auth.adminPassword) {
-    authLevel = 'admin';
-    authSession = { level: 'admin', hash, time: Date.now() };
-    localStorage.setItem('board_auth_session', JSON.stringify(authSession));
-    closeLogin();
-    updateAuthUI();
-    showToast('管理员登录成功');
-  } else if (cloudData.auth && cloudData.auth.editorPassword && hash === cloudData.auth.editorPassword) {
-    authLevel = 'editor';
-    authSession = { level: 'editor', hash, time: Date.now() };
-    localStorage.setItem('board_auth_session', JSON.stringify(authSession));
-    closeLogin();
-    updateAuthUI();
-    showToast('编辑权限已解锁');
-  } else {
-    showToast('密码错误');
-  }
-}
-
-function logout() {
-  authLevel = 'viewer';
-  authSession = null;
-  localStorage.removeItem('board_auth_session');
-  updateAuthUI();
-  showToast('已退出登录');
-}
-
-function toggleAuth() {
-  if (!canManage() && !(!isAuthEnabled() && !cloudData.auth?.adminPassword)) { showToast('需要管理员权限'); return; }
-  if (isAuthEnabled()) {
-    // Disable
-    if (!confirm('关闭权限控制后，所有人都可以编辑。确认关闭？')) return;
-    cloudData.auth.enabled = false;
-    cloudWrite(cloudData).then(() => {
-      showToast('权限控制已关闭');
-      loadData();
-    });
-  } else {
-    // Enable - show fields to set passwords first
-    if (!cloudData.auth) cloudData.auth = {};
-    document.getElementById('authFields').style.display = 'block';
-    document.getElementById('authToggleBtn').textContent = '权限控制待启用（请先设置密码）';
-    document.getElementById('authToggleBtn').className = 'auth-toggle-btn disable';
-    document.getElementById('authStatusBox').className = 'auth-status-box on';
-    document.getElementById('authStatusBox').textContent = '请设置管理员密码和编辑密码，保存后权限控制自动生效';
-    document.getElementById('authAdminPwd').focus();
-    showToast('请设置管理员密码和编辑密码');
-  }
-}
-
-function saveAuthPasswords() {
-  if (!canManage()) { showToast('需要管理员权限'); return; }
-  const adminPwd = document.getElementById('authAdminPwd').value.trim();
-  const editorPwd = document.getElementById('authEditorPwd').value.trim();
-  if (!cloudData.auth) cloudData.auth = {};
-  cloudData.auth.enabled = true;
-  let changed = false;
-  if (adminPwd) {
-    cloudData.auth.adminPassword = simpleHash(adminPwd);
-    changed = true;
-  }
-  if (editorPwd) {
-    cloudData.auth.editorPassword = simpleHash(editorPwd);
-    changed = true;
-  }
-  if (!cloudData.auth.adminPassword) { showToast('请设置管理员密码'); return; }
-  if (!cloudData.auth.editorPassword) { showToast('请设置编辑密码'); return; }
-  // Auto-login/refresh admin session
-  authLevel = 'admin';
-  authSession = { level: 'admin', hash: cloudData.auth.adminPassword, time: Date.now() };
-  localStorage.setItem('board_auth_session', JSON.stringify(authSession));
-  setSyncStatus('syncing', '保存中...');
-  cloudWrite(cloudData).then(() => {
-    showToast(changed ? '密码已保存' : '权限配置已同步');
-    loadData();
-  }).catch(() => {
-    showToast('保存失败');
-    setSyncStatus('error', '保存失败');
-  });
-}
-
 // ===== Firebase Cloud API =====
 async function cloudRead() {
   const res = await fetch(STORAGE_URL, { headers: { 'Accept': 'application/json' } });
@@ -1167,9 +864,6 @@ function startRealtimeListener() {
         if (!cloudData.members) cloudData.members = [];
         if (!cloudData.reviews) cloudData.reviews = [];
         if (!cloudData.errors) cloudData.errors = [];
-        if (!cloudData.auth) cloudData.auth = { enabled: false };
-        checkAuthSession();
-        updateAuthUI();
         document.getElementById('boardTitle').textContent = cloudData.boardName || '团队日清看板';
         document.title = cloudData.boardName || '团队日清看板';
         renderStats();
@@ -1201,7 +895,6 @@ async function loadData() {
     if (!cloudData.members) cloudData.members = [];
     if (!cloudData.reviews) cloudData.reviews = [];
     if (!cloudData.errors) cloudData.errors = [];
-    if (!cloudData.auth) cloudData.auth = { enabled: false };
     // 首次使用：如果数据库为空（无 boardName），初始化默认看板并写回 Firebase
     if (!cloudData.boardName) {
       cloudData.boardName = '刘芳律师团队日程看板';
@@ -1209,14 +902,10 @@ async function loadData() {
       cloudData.items = [];
       cloudData.reviews = [];
       cloudData.errors = [];
-      cloudData.auth = { enabled: false, adminPassword: null, editorPassword: null };
       cloudData.lastUpdate = new Date().toISOString();
       cloudData.updatedBy = '系统初始化';
       try { await cloudWrite(cloudData); } catch(e) { console.warn('Init write failed', e); }
     }
-    // Check auth session against new data
-    checkAuthSession();
-    updateAuthUI();
     document.getElementById('boardTitle').textContent = cloudData.boardName || '团队日清看板';
     document.title = cloudData.boardName || '团队日清看板';
     renderStats();
@@ -1305,56 +994,18 @@ function openSettings() {
   document.getElementById('settingsBoardName').value = cloudData.boardName || '';
   document.getElementById('settingsMembers').value = (cloudData.members || []).join('\n');
   document.getElementById('settingsCurrentUser').value = currentUser || '';
-  // When auth enabled: only admin can change board name & members
-  const isAdmin = canManage();
-  const authOn = isAuthEnabled();
-  document.getElementById('settingsBoardName').disabled = authOn && !isAdmin;
-  document.getElementById('settingsMembers').disabled = authOn && !isAdmin;
-  document.getElementById('settingsNonAdminHint').style.display = (authOn && !isAdmin) ? 'block' : 'none';
-  // Auth section: only visible to admin (or when auth is off, anyone can enable)
-  const authSection = document.getElementById('authSection');
-  if (isAdmin || !authOn) {
-    authSection.style.display = 'block';
-    const statusBox = document.getElementById('authStatusBox');
-    const toggleBtn = document.getElementById('authToggleBtn');
-    const fields = document.getElementById('authFields');
-    if (authOn) {
-      statusBox.className = 'auth-status-box on';
-      statusBox.textContent = '✅ 权限控制已开启 — 未授权用户只能查看';
-      toggleBtn.textContent = '关闭权限控制';
-      toggleBtn.className = 'auth-toggle-btn disable';
-      fields.style.display = 'block';
-      document.getElementById('authAdminPwd').placeholder = '输入新密码以修改（留空不改）';
-      document.getElementById('authEditorPwd').placeholder = '输入新密码以修改（留空不改）';
-      document.getElementById('authAdminPwd').value = '';
-      document.getElementById('authEditorPwd').value = '';
-    } else {
-      statusBox.className = 'auth-status-box off';
-      statusBox.textContent = '权限控制未开启 — 所有人可编辑';
-      toggleBtn.textContent = '开启权限控制';
-      toggleBtn.className = 'auth-toggle-btn enable';
-      fields.style.display = 'none';
-    }
-  } else {
-    authSection.style.display = 'none';
-  }
   document.getElementById('settingsModal').classList.add('show');
 }
 function closeSettings() { document.getElementById('settingsModal').classList.remove('show'); }
 async function saveSettings() {
-  const isAdmin = canManage();
-  const authOn = isAuthEnabled();
   const user = document.getElementById('settingsCurrentUser').value.trim();
   currentUser = user;
   localStorage.setItem('board_current_user', user);
-  // Only admin can change board name & members (or anyone when auth is off)
-  if (!authOn || isAdmin) {
-    const name = document.getElementById('settingsBoardName').value.trim();
-    const membersText = document.getElementById('settingsMembers').value.trim();
-    const members = membersText ? membersText.split('\n').map(m => m.trim()).filter(m => m) : [];
-    cloudData.boardName = name;
-    cloudData.members = members;
-  }
+  const name = document.getElementById('settingsBoardName').value.trim();
+  const membersText = document.getElementById('settingsMembers').value.trim();
+  const members = membersText ? membersText.split('\n').map(m => m.trim()).filter(m => m) : [];
+  cloudData.boardName = name;
+  cloudData.members = members;
   setSyncStatus('syncing', '保存中...');
   try {
     await cloudWrite(cloudData);
@@ -1367,7 +1018,6 @@ async function saveSettings() {
 // ===== Edit Modal =====
 let editingId = null;
 function openEdit(id) {
-  if (!requireEdit()) return;
   const item = (cloudData.items || []).find(i => i.id === id);
   if (!item) return;
   editingId = id;
@@ -1393,7 +1043,6 @@ function openEdit(id) {
 }
 function closeEdit() { document.getElementById('editModal').classList.remove('show'); editingId = null; }
 async function saveEdit() {
-  if (!requireEdit()) return;
   if (!editingId) return;
   const title = document.getElementById('editTitle').value.trim();
   const assignee = document.getElementById('editAssignee').value;
@@ -1929,7 +1578,6 @@ function renderReview() {
 }
 
 function openReview(id) {
-  if (!requireEdit()) return;
   editingReviewId = id || null;
   const names = getMemberNames();
   const authorSel = document.getElementById('reviewAuthor');
@@ -1954,7 +1602,6 @@ function openReview(id) {
 }
 function closeReview() { document.getElementById('reviewModal').classList.remove('show'); editingReviewId = null; }
 async function saveReview() {
-  if (!requireEdit()) return;
   const author = document.getElementById('reviewAuthor').value;
   const date = document.getElementById('reviewDate').value;
   const mood = document.getElementById('reviewMood').value;
@@ -1981,7 +1628,6 @@ async function saveReview() {
   } catch(e) { showToast('保存失败'); setSyncStatus('error', '保存失败'); }
 }
 async function deleteReview(id) {
-  if (!requireEdit()) return;
   if (!confirm('确认删除此复盘记录？')) return;
   cloudData.reviews = (cloudData.reviews || []).filter(r => r.id !== id);
   setSyncStatus('syncing', '删除中...');
@@ -2046,7 +1692,6 @@ function renderErrorCards(errors) {
 }
 
 function openErrorEntry(id) {
-  if (!requireEdit()) return;
   editingErrorId = id || null;
   const names = getMemberNames();
   const authorSel = document.getElementById('errorAuthor');
@@ -2072,7 +1717,6 @@ function openErrorEntry(id) {
 }
 function closeError() { document.getElementById('errorModal').classList.remove('show'); editingErrorId = null; }
 async function saveErrorEntry() {
-  if (!requireEdit()) return;
   const title = document.getElementById('errorTitle').value.trim();
   const author = document.getElementById('errorAuthor').value;
   const category = document.getElementById('errorCategory').value;
@@ -2101,7 +1745,6 @@ async function saveErrorEntry() {
   } catch(e) { showToast('保存失败'); setSyncStatus('error', '保存失败'); }
 }
 async function deleteErrorEntry(id) {
-  if (!requireEdit()) return;
   if (!confirm('确认删除此错题记录？')) return;
   cloudData.errors = (cloudData.errors || []).filter(e => e.id !== id);
   setSyncStatus('syncing', '删除中...');
@@ -2111,7 +1754,6 @@ async function deleteErrorEntry(id) {
 
 // ===== Actions =====
 async function quickAdd() {
-  if (!requireEdit()) return;
   const title = document.getElementById('quickTitle').value.trim();
   const assignee = document.getElementById('quickAssignee').value;
   const priority = document.getElementById('quickPriority').value;
@@ -2147,7 +1789,6 @@ async function quickAdd() {
 }
 
 async function updateStatus(id, status) {
-  if (!requireEdit()) return;
   const item = cloudData.items.find(i => i.id === id);
   if (!item) return;
   item.status = status;
@@ -2170,7 +1811,6 @@ async function updateStatus(id, status) {
 }
 
 async function cycleStatus(id) {
-  if (!requireEdit()) return;
   const item = cloudData.items.find(i => i.id === id);
   if (!item) return;
   const next = item.status === '待办' ? '进行中' : '需复核';
@@ -2183,7 +1823,6 @@ async function cycleStatus(id) {
 
 // 提交复核：进行中 → 需复核
 async function submitForReview(id) {
-  if (!requireEdit()) return;
   const item = cloudData.items.find(i => i.id === id);
   if (!item) return;
   const comment = prompt('提交复核说明（可留空）：\n例如：已完成初稿，请负责人复核。', '');
@@ -2201,7 +1840,6 @@ async function submitForReview(id) {
 
 // 复核定稿：需复核 → 已完成
 async function approveReview(id) {
-  if (!requireEdit()) return;
   const item = cloudData.items.find(i => i.id === id);
   if (!item) return;
   const comment = prompt('复核意见（可留空）：\n例如：已审核通过，可以定稿。', '');
@@ -2224,7 +1862,6 @@ async function approveReview(id) {
 
 // 退回修改：需复核 → 进行中
 async function rejectReview(id) {
-  if (!requireEdit()) return;
   const item = cloudData.items.find(i => i.id === id);
   if (!item) return;
   const comment = prompt('退回修改说明（可留空）：\n例如：需补充XX材料后重新提交。', '');
@@ -2243,7 +1880,6 @@ async function rejectReview(id) {
 }
 
 async function deleteItem(id) {
-  if (!requireEdit()) return;
   if (!confirm('确认删除此事项？')) return;
   cloudData.items = cloudData.items.filter(i => i.id !== id);
   setSyncStatus('syncing', '删除中...');
