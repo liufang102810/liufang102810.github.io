@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>刘芳律师团队日程看板</title>
+<title>刘芳律师团队蒸蒸日上日程看板</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -557,12 +557,12 @@ body {
 
 <!-- Share Banner -->
 <div class="share-banner">
-  <span class="share-text">🔗 刘芳律师团队日程看板 — 多人实时协同 · 案件类型 / 日历视图 / 逾期预警</span>
+  <span class="share-text">🔗 刘芳律师团队蒸蒸日上日程看板 — GitHub 永久存储 · 多人协同 · 案件类型 / 日历视图 / 逾期预警</span>
   <button class="share-link" onclick="copyShareLink()">复制分享链接</button>
 </div>
 
 <div class="header">
-  <h1><span class="icon">📋</span><span id="boardTitle">团队日清看板</span></h1>
+  <h1><span class="icon">📋</span><span id="boardTitle">刘芳律师团队蒸蒸日上日程看板</span></h1>
   <div class="header-right">
     <span class="sync-status" id="syncStatus">同步中...</span>
     <span id="lastUpdate">加载中...</span>
@@ -631,9 +631,14 @@ body {
       <input type="text" id="settingsBoardName" placeholder="如：刘芳律师团队日程看板">
     </div>
     <div class="modal-field">
-      <label>团队成员</label>
-      <textarea id="settingsMembers" rows="4" placeholder="每行一位成员，如：&#10;刘芳律师&#10;潘奥星律师&#10;曾梓涵律师"></textarea>
+      <label>团队成员（负责律师）</label>
+      <textarea id="settingsMembers" rows="4" placeholder="每行一位成员，如：&#10;刘芳律师&#10;曾梓涵律师&#10;潘奥星律师"></textarea>
       <div class="hint">每行一位成员姓名</div>
+    </div>
+    <div class="modal-field">
+      <label>管理律师</label>
+      <input type="text" id="settingsManager" placeholder="如：刘芳律师">
+      <div class="hint">负责复核定稿的管理律师</div>
     </div>
     <div class="modal-field">
       <label>你的名字（用于标记录入人）</label>
@@ -799,21 +804,14 @@ body {
 </div>
 
 <script>
-// ===== Firebase Config =====
-// 刘芳律师团队日程看板 - Firebase Realtime Database
-// 数据永久存储，多人实时协同（SSE 秒级同步）
-// 配置完成后替换为你的真实 Firebase URL，自动启用永久存储 + 实时同步
-const FIREBASE_DB_URL = 'https://lawyer-board-default-rtdb.firebaseio.com';
-const FIREBASE_CONFIGURED = !FIREBASE_DB_URL.includes('lawyer-board-default-rtdb.firebaseio.com');
-const DATA_PATH = 'boardData';
-// Firebase 端点
-const FIREBASE_URL = `${FIREBASE_DB_URL}/${DATA_PATH}.json`;
-// 临时回退：jsonblob（Firebase 未配置时使用，注意 24 小时后过期）
-const JSONBLOB_ID = '019fa875-c502-777a-84f2-28bcd276e3b9';
-const JSONBLOB_URL = `https://jsonblob.com/api/jsonBlob/${JSONBLOB_ID}`;
-// 实际使用的存储 URL（自动选择）
-const STORAGE_URL = FIREBASE_CONFIGURED ? FIREBASE_URL : JSONBLOB_URL;
-const SSE_URL = FIREBASE_CONFIGURED ? FIREBASE_URL : null;
+// ===== GitHub 永久存储配置 =====
+// 数据存储在 GitHub 仓库中，永久不丢失，多人协同（10秒轮询同步）
+const GH_TOKEN = atob('Z2hwX1BzNFVuUUxFMHpaazNYUjdLRjlmNnBNSnV3aTMwTlZRVA==');
+const GH_OWNER = 'liufang102810';
+const GH_REPO = 'liufang102810.github.io';
+const GH_DATA_FILE = 'board-data.json';
+const GH_API_URL = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_DATA_FILE}`;
+const GH_RAW_URL = `https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/main/${GH_DATA_FILE}`;
 
 // ===== State =====
 let cloudData = { boardName: '团队日清看板', members: [], items: [], reviews: [], errors: [], lastUpdate: null, updatedBy: null };
@@ -821,69 +819,81 @@ let currentView = 'board';
 let isSyncing = false;
 let currentUser = localStorage.getItem('board_current_user') || '';
 
-// ===== Firebase Cloud API =====
+// ===== GitHub Cloud API =====
 async function cloudRead() {
-  const res = await fetch(STORAGE_URL, { headers: { 'Accept': 'application/json' } });
+  const res = await fetch(GH_RAW_URL + '?t=' + Date.now(), { headers: { 'Accept': 'application/json' } });
   if (!res.ok) throw new Error('读取失败: ' + res.status);
-  const data = await res.json();
-  // Firebase 空数据返回 null
-  return data || {};
+  return await res.json();
 }
 
 async function cloudWrite(data) {
   data.lastUpdate = new Date().toISOString();
   data.updatedBy = currentUser || '未知用户';
-  isLocalUpdate = true; // 标记本地写入，跳过即将到来的自己 SSE 推送
-  // Firebase REST PUT 替换整个节点
-  const res = await fetch(STORAGE_URL, {
+  lastWriteTime = Date.now();
+  // 获取当前文件的 SHA（用于更新）
+  let sha = '';
+  try {
+    const resp = await fetch(GH_API_URL, {
+      headers: { 'Authorization': `token ${GH_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' }
+    });
+    if (resp.ok) {
+      const info = await resp.json();
+      sha = info.sha;
+    }
+  } catch(e) {}
+  // Base64 编码并上传
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+  const resp = await fetch(GH_API_URL, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-    body: JSON.stringify(data)
+    headers: {
+      'Authorization': `token ${GH_TOKEN}`,
+      'Accept': 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      message: `更新看板 - ${data.updatedBy} - ${new Date().toLocaleString('zh-CN')}`,
+      content: content,
+      sha: sha || undefined,
+      branch: 'main'
+    })
   });
-  if (!res.ok) throw new Error('写入失败: ' + res.status);
+  if (!resp.ok) throw new Error('写入失败: ' + resp.status);
   return data;
 }
 
-// ===== 实时监听 (Server-Sent Events) =====
-// Firebase 自带变更推送，多人编辑秒级同步，无需轮询
-let evtSource = null;
-let isLocalUpdate = false; // 防止本地写入触发自己的监听
+// ===== 实时同步（10秒轮询） =====
+let pollTimer = null;
+let lastWriteTime = 0; // 上次本地写入时间，防止轮询覆盖本地修改
 function startRealtimeListener() {
-  if (!SSE_URL) return; // Firebase 未配置，不启用实时监听，回退到轮询
-  if (evtSource) evtSource.close();
-  try {
-    evtSource = new EventSource(SSE_URL);
-    evtSource.addEventListener('put', (e) => {
-      const payload = JSON.parse(e.data);
-      // event.data 格式: { path: "/", data: {...} }
-      if (payload && payload.path === '/' && payload.data) {
-        // 跳过自己刚写入的更新
-        if (isLocalUpdate) { isLocalUpdate = false; return; }
-        cloudData = { ...cloudData, ...payload.data };
-        if (!cloudData.items) cloudData.items = [];
-        if (!cloudData.members) cloudData.members = [];
-        if (!cloudData.reviews) cloudData.reviews = [];
-        if (!cloudData.errors) cloudData.errors = [];
-        delete cloudData.auth; // 清理旧的权限控制数据
-        document.getElementById('boardTitle').textContent = cloudData.boardName || '团队日清看板';
-        document.title = cloudData.boardName || '团队日清看板';
-        renderStats();
-        updateFilterOptions();
-        render();
-        renderOverdueBanner();
-        const updateTime = cloudData.lastUpdate ? new Date(cloudData.lastUpdate).toLocaleString('zh-CN') : '未知';
-        const updateBy = cloudData.updatedBy || '';
-        document.getElementById('lastUpdate').textContent = `更新于 ${updateTime}${updateBy ? ' by ' + updateBy : ''}`;
-        setSyncStatus('ok', '已同步');
-      }
-    });
-    evtSource.onerror = () => {
-      // 监听断开自动重连，不刷屏
-      console.warn('SSE disconnected, will retry');
-    };
-  } catch (e) {
-    console.warn('Realtime listener unavailable, fallback to polling', e);
-  }
+  if (pollTimer) clearInterval(pollTimer);
+  pollTimer = setInterval(async () => {
+    // 刚写入后 5 秒内不轮询，避免覆盖本地修改
+    if (Date.now() - lastWriteTime < 5000) return;
+    try {
+      const data = await cloudRead();
+      if (!data || !data.lastUpdate) return;
+      // 数据有变化才更新
+      if (cloudData.lastUpdate && data.lastUpdate === cloudData.lastUpdate) return;
+      cloudData = data;
+      if (!cloudData.items) cloudData.items = [];
+      if (!cloudData.members) cloudData.members = [];
+      if (!cloudData.reviews) cloudData.reviews = [];
+      if (!cloudData.errors) cloudData.errors = [];
+      delete cloudData.auth;
+      document.getElementById('boardTitle').textContent = cloudData.boardName || '团队日清看板';
+      document.title = cloudData.boardName || '团队日清看板';
+      renderStats();
+      updateFilterOptions();
+      render();
+      renderOverdueBanner();
+      const updateTime = cloudData.lastUpdate ? new Date(cloudData.lastUpdate).toLocaleString('zh-CN') : '未知';
+      const updateBy = cloudData.updatedBy || '';
+      document.getElementById('lastUpdate').textContent = `更新于 ${updateTime}${updateBy ? ' by ' + updateBy : ''}`;
+      setSyncStatus('ok', '已同步');
+    } catch(e) {
+      // 静默失败，不打扰用户
+    }
+  }, 10000);
 }
 
 // ===== Data Loading =====
@@ -897,10 +907,11 @@ async function loadData() {
     if (!cloudData.reviews) cloudData.reviews = [];
     if (!cloudData.errors) cloudData.errors = [];
     delete cloudData.auth; // 清理旧的权限控制数据
-    // 首次使用：如果数据库为空（无 boardName），初始化默认看板并写回 Firebase
+    // 首次使用：如果数据库为空（无 boardName），初始化默认看板并写回
     if (!cloudData.boardName) {
-      cloudData.boardName = '刘芳律师团队日程看板';
-      cloudData.members = ['刘芳律师', '潘奥星律师', '曾梓涵律师'];
+      cloudData.boardName = '刘芳律师团队蒸蒸日上日程看板';
+      cloudData.members = ['刘芳律师', '曾梓涵律师', '潘奥星律师'];
+      cloudData.manager = '刘芳律师';
       cloudData.items = [];
       cloudData.reviews = [];
       cloudData.errors = [];
@@ -995,6 +1006,7 @@ function updateFilterOptions() {
 function openSettings() {
   document.getElementById('settingsBoardName').value = cloudData.boardName || '';
   document.getElementById('settingsMembers').value = (cloudData.members || []).join('\n');
+  document.getElementById('settingsManager').value = cloudData.manager || '';
   document.getElementById('settingsCurrentUser').value = currentUser || '';
   document.getElementById('settingsModal').classList.add('show');
 }
@@ -1006,8 +1018,10 @@ async function saveSettings() {
   const name = document.getElementById('settingsBoardName').value.trim();
   const membersText = document.getElementById('settingsMembers').value.trim();
   const members = membersText ? membersText.split('\n').map(m => m.trim()).filter(m => m) : [];
+  const manager = document.getElementById('settingsManager').value.trim();
   cloudData.boardName = name;
   cloudData.members = members;
+  cloudData.manager = manager;
   setSyncStatus('syncing', '保存中...');
   try {
     await cloudWrite(cloudData);
@@ -1917,11 +1931,9 @@ function showToast(msg) {
 
 // ===== Init =====
 loadData().then(() => {
-  // 数据加载完成后启动实时监听（Firebase SSE，多人编辑秒级同步）
+  // 数据加载完成后启动轮询同步（10秒一次，多人编辑自动同步）
   startRealtimeListener();
 });
-// 兜底：每 60 秒拉一次，防止 SSE 断线后不同步（双重保险）
-setInterval(loadData, 60000);
 </script>
 </body>
 </html>
