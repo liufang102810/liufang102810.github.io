@@ -13,16 +13,17 @@
       "assignee": "刘芳律师",
       "priority": "普通",
       "caseType": "合同审查",
-      "status": "进行中",
+      "status": "需复核",
       "dueDate": "2026-08-09T19:21:00",
       "createdAt": "2026-08-08T11:21:04.815Z",
       "completedAt": null,
       "note": "",
       "recorder": "刘芳律师",
-      "submittedForReviewAt": null,
-      "submittedBy": null,
+      "submittedForReviewAt": "2026-08-08T12:54:24.643Z",
+      "submittedBy": "刘芳律师",
       "reviewedAt": null,
-      "reviewedBy": null
+      "reviewedBy": null,
+      "submitComment": "请复核"
     },
     {
       "id": "item-1786188084855-u5w3up",
@@ -212,6 +213,6 @@
     }
   ],
   "errors": [],
-  "lastUpdate": "2026-08-08T12:54:11.759Z",
+  "lastUpdate": "2026-08-08T12:54:24.643Z",
   "updatedBy": "未知用户"
 }
