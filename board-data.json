@@ -35,12 +35,13 @@
       "dueDate": "2026-08-10T19:21:00",
       "createdAt": "2026-08-08T11:21:24.855Z",
       "completedAt": null,
-      "note": "",
+      "note": "注意细节",
       "recorder": "刘芳律师",
       "submittedForReviewAt": null,
       "submittedBy": null,
       "reviewedAt": null,
-      "reviewedBy": null
+      "reviewedBy": null,
+      "hours": 0
     },
     {
       "id": "item-1786188123216-h1a9id",
@@ -301,7 +302,7 @@
     }
   ],
   "errors": [],
-  "lastUpdate": "2026-08-08T13:06:07.313Z",
+  "lastUpdate": "2026-08-08T13:16:07.313Z",
   "updatedBy": "未知用户",
   "config": {
     "loginHash": "a75463f27244fc9b065d3c68a3af00c22f789b22e984f3ee4a5e6b49d54a987a"
