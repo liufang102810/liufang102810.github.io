@@ -423,6 +423,27 @@ body {
 .error-filter-bar { display: flex; gap: 8px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
 .error-filter-bar select { padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; background: white; cursor: pointer; outline: none; }
 
+/* ===== Back to Home Button ===== */
+.back-home-bar { padding: 12px 32px 0; }
+.back-home-btn { 
+  background: var(--card-bg); 
+  border: 1px solid var(--border); 
+  border-radius: 8px; 
+  padding: 6px 14px; 
+  font-size: 13px; 
+  color: var(--text-light); 
+  cursor: pointer; 
+  display: inline-flex; 
+  align-items: center; 
+  gap: 4px; 
+  transition: all 0.2s; 
+}
+.back-home-btn:hover { 
+  background: var(--primary); 
+  color: white; 
+  border-color: var(--primary); 
+}
+
 /* ===== Empty State ===== */
 .empty-state { text-align: center; padding: 80px 20px; color: var(--text-light); }
 .empty-state .big-icon { font-size: 48px; margin-bottom: 16px; }
@@ -865,12 +886,14 @@ function showErrorBanner(show, text) {
 }
 
 // ===== GitHub Cloud API =====
-async function cloudRead() {
-  // 优先用 GitHub Pages 同源读取（快速，国内可访问）
-  try {
-    const res = await fetch(GH_READ_URL + '?t=' + Date.now(), { cache: 'no-store' });
-    if (res.ok) return await res.json();
-  } catch(e) { /* fallback to API */ }
+async function cloudRead(forceApi = false) {
+  // 如果 forceApi 为 true，跳过 GitHub Pages 缓存读取，直接使用 API 获取最新数据
+  if (!forceApi) {
+    try {
+      const res = await fetch(GH_READ_URL + '?t=' + Date.now(), { cache: 'no-store' });
+      if (res.ok) return await res.json();
+    } catch(e) { /* fallback to API */ }
+  }
   // 备选：通过 GitHub API 读取（绕过 CDN 缓存，获取最新数据）
   try {
     const resp = await fetch(GH_API_URL, {
@@ -935,16 +958,17 @@ async function cloudWrite(data) {
   return data;
 }
 
-// ===== 实时同步（10秒轮询） =====
+// ===== 实时同步（15秒轮询，使用 API 避免缓存） =====
 let pollTimer = null;
 let lastWriteTime = 0; // 上次本地写入时间，防止轮询覆盖本地修改
 function startRealtimeListener() {
   if (pollTimer) clearInterval(pollTimer);
   pollTimer = setInterval(async () => {
-    // 刚写入后 5 秒内不轮询，避免覆盖本地修改
-    if (Date.now() - lastWriteTime < 5000) return;
+    // 刚写入后 30 秒内不轮询，给 GitHub Pages CDN 充分时间同步，避免读到旧数据覆盖本地修改
+    if (Date.now() - lastWriteTime < 30000) return;
     try {
-      const data = await cloudRead();
+      // 轮询强制使用 GitHub API 读取，避免 Pages 缓存导致读到旧数据
+      const data = await cloudRead(true);
       if (!data || !data.lastUpdate) return;
       // 数据有变化才更新
       if (cloudData.lastUpdate && data.lastUpdate === cloudData.lastUpdate) return;
@@ -963,11 +987,11 @@ function startRealtimeListener() {
       const updateTime = cloudData.lastUpdate ? new Date(cloudData.lastUpdate).toLocaleString('zh-CN') : '未知';
       const updateBy = cloudData.updatedBy || '';
       document.getElementById('lastUpdate').textContent = `更新于 ${updateTime}${updateBy ? ' by ' + updateBy : ''}`;
-      setSyncStatus('ok', '已同步');
+      setSyncStatus('ok', '已同步 (远程)');
     } catch(e) {
       // 静默失败，不打扰用户
     }
-  }, 10000);
+  }, 15000);
 }
 
 // ===== Data Loading =====
@@ -1029,6 +1053,22 @@ async function loadData() {
   const updateBy = cloudData.updatedBy || '';
   document.getElementById('lastUpdate').textContent = `更新于 ${updateTime}${updateBy ? ' by ' + updateBy : ''}`;
   if (githubOk) setSyncStatus('ok', '已同步');
+}
+
+// 操作成功后直接刷新 UI，不重新读取网络数据（避免缓存旧数据覆盖本地修改）
+function refreshUI() {
+  document.getElementById('boardTitle').textContent = cloudData.boardName || '团队日清看板';
+  document.title = cloudData.boardName || '团队日清看板';
+  renderStats();
+  updateFilterOptions();
+  const recSel = document.getElementById('quickRecorder');
+  if (recSel) recSel.value = currentUser;
+  render();
+  renderOverdueBanner();
+  const updateTime = cloudData.lastUpdate ? new Date(cloudData.lastUpdate).toLocaleString('zh-CN') : '未知';
+  const updateBy = cloudData.updatedBy || '';
+  document.getElementById('lastUpdate').textContent = `更新于 ${updateTime}${updateBy ? ' by ' + updateBy : ''}`;
+  setSyncStatus('ok', '已同步');
 }
 
 function setSyncStatus(type, text) {
@@ -1117,7 +1157,7 @@ async function saveSettings() {
     await cloudWrite(cloudData);
     closeSettings();
     showToast('设置已保存');
-    loadData();
+    refreshUI();
   } catch(e) { showToast(e.message && e.message.includes('401') ? '已保存到本地，GitHub Token 已失效' : '已保存到本地，GitHub 同步失败'); setSyncStatus('error', '同步失败'); }
 }
 
@@ -1186,7 +1226,7 @@ async function saveEdit() {
     await cloudWrite(cloudData);
     closeEdit();
     showToast('已保存修改');
-    loadData();
+    refreshUI();
   } catch(e) { showToast(e.message && e.message.includes('401') ? '已保存到本地，GitHub Token 已失效' : '已保存到本地，GitHub 同步失败'); setSyncStatus('error', '同步失败'); }
 }
 
@@ -1226,17 +1266,22 @@ function switchView(view) {
 // ===== Render =====
 function render() {
   const content = document.getElementById('content');
-  if (currentView === 'review') { content.innerHTML = renderReview(); return; }
-  if (currentView === 'error') { content.innerHTML = renderError(); return; }
-  if (currentView === 'calendar') { content.innerHTML = renderCalendar(); return; }
-  const items = getFilteredItems();
-  if (items.length === 0 && (cloudData.items || []).length === 0) {
-    content.innerHTML = `<div class="empty-state"><div class="big-icon">📝</div><p>暂无事项</p><p class="hint">在上方输入框添加第一条事项，所有人将实时看到</p></div>`;
-    return;
+  const backBtn = currentView !== 'board' 
+    ? '<div class="back-home-bar"><button class="back-home-btn" onclick="switchView(\'board\')">← 返回看板主页</button></div>' 
+    : '';
+  let html = '';
+  if (currentView === 'review') { html = renderReview(); }
+  else if (currentView === 'error') { html = renderError(); }
+  else if (currentView === 'calendar') { html = renderCalendar(); }
+  else {
+    const items = getFilteredItems();
+    if (items.length === 0 && (cloudData.items || []).length === 0) {
+      html = `<div class="empty-state"><div class="big-icon">📝</div><p>暂无事项</p><p class="hint">在上方输入框添加第一条事项，所有人将实时看到</p></div>`;
+    } else if (currentView === 'board') html = renderBoard(items);
+    else if (currentView === 'list') html = renderList(items);
+    else html = renderMember(items);
   }
-  if (currentView === 'board') content.innerHTML = renderBoard(items);
-  else if (currentView === 'list') content.innerHTML = renderList(items);
-  else content.innerHTML = renderMember(items);
+  content.innerHTML = backBtn + html;
 }
 
 function esc(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
@@ -1730,14 +1775,14 @@ async function saveReview() {
     await cloudWrite(cloudData);
     closeReview();
     showToast('复盘已保存');
-    loadData();
+    refreshUI();
   } catch(e) { showToast(e.message && e.message.includes('401') ? '已保存到本地，GitHub Token 已失效' : '已保存到本地，GitHub 同步失败'); setSyncStatus('error', '同步失败'); }
 }
 async function deleteReview(id) {
   if (!confirm('确认删除此复盘记录？')) return;
   cloudData.reviews = (cloudData.reviews || []).filter(r => r.id !== id);
   setSyncStatus('syncing', '删除中...');
-  try { await cloudWrite(cloudData); showToast('已删除'); loadData(); }
+  try { await cloudWrite(cloudData); showToast('已删除'); refreshUI(); }
   catch(e) { showToast(e.message && e.message.includes('401') ? '已保存到本地，GitHub Token 已失效' : '已保存到本地，GitHub 同步失败'); setSyncStatus('error', '同步失败'); }
 }
 
@@ -1847,14 +1892,14 @@ async function saveErrorEntry() {
     await cloudWrite(cloudData);
     closeError();
     showToast('错题记录已保存');
-    loadData();
+    refreshUI();
   } catch(e) { showToast(e.message && e.message.includes('401') ? '已保存到本地，GitHub Token 已失效' : '已保存到本地，GitHub 同步失败'); setSyncStatus('error', '同步失败'); }
 }
 async function deleteErrorEntry(id) {
   if (!confirm('确认删除此错题记录？')) return;
   cloudData.errors = (cloudData.errors || []).filter(e => e.id !== id);
   setSyncStatus('syncing', '删除中...');
-  try { await cloudWrite(cloudData); showToast('已删除'); loadData(); }
+  try { await cloudWrite(cloudData); showToast('已删除'); refreshUI(); }
   catch(e) { showToast(e.message && e.message.includes('401') ? '已保存到本地，GitHub Token 已失效' : '已保存到本地，GitHub 同步失败'); setSyncStatus('error', '同步失败'); }
 }
 
@@ -1890,7 +1935,7 @@ async function quickAdd() {
     document.getElementById('quickDue').value = '';
     document.getElementById('quickCaseType').value = '';
     showToast('已添加');
-    loadData();
+    refreshUI();
   } catch(e) {
     showToast(e.message && e.message.includes('401') ? '已保存到本地，GitHub Token 已失效' : '已保存到本地，GitHub 同步失败');
     setSyncStatus('error', '同步失败');
@@ -1915,7 +1960,7 @@ async function updateStatus(id, status) {
   setSyncStatus('syncing', '更新中...');
   try {
     await cloudWrite(cloudData);
-    loadData();
+    refreshUI();
   } catch(e) {
     showToast(e.message && e.message.includes('401') ? '已保存到本地，GitHub Token 已失效' : '已保存到本地，GitHub 同步失败');
     setSyncStatus('error', '同步失败');
@@ -1946,7 +1991,7 @@ async function submitForReview(id) {
   try {
     await cloudWrite(cloudData);
     showToast('已提交复核，等待负责人定稿');
-    loadData();
+    refreshUI();
   } catch(e) {
     showToast(e.message && e.message.includes('401') ? '已保存到本地，GitHub Token 已失效' : '已保存到本地，GitHub 同步失败');
     setSyncStatus('error', '同步失败');
@@ -1971,7 +2016,7 @@ async function approveReview(id) {
   try {
     await cloudWrite(cloudData);
     showToast('已复核定稿');
-    loadData();
+    refreshUI();
   } catch(e) { showToast(e.message && e.message.includes('401') ? '已保存到本地，GitHub Token 已失效' : '已保存到本地，GitHub 同步失败'); setSyncStatus('error', '同步失败'); }
 }
 
@@ -1990,7 +2035,7 @@ async function rejectReview(id) {
   try {
     await cloudWrite(cloudData);
     showToast('已退回修改');
-    loadData();
+    refreshUI();
   } catch(e) { showToast(e.message && e.message.includes('401') ? '已保存到本地，GitHub Token 已失效' : '已保存到本地，GitHub 同步失败'); setSyncStatus('error', '同步失败'); }
 }
 
@@ -2001,7 +2046,7 @@ async function deleteItem(id) {
   try {
     await cloudWrite(cloudData);
     showToast('已删除');
-    loadData();
+    refreshUI();
   } catch(e) { showToast(e.message && e.message.includes('401') ? '已保存到本地，GitHub Token 已失效' : '已保存到本地，GitHub 同步失败'); setSyncStatus('error', '同步失败'); }
 }
 
@@ -2030,7 +2075,7 @@ function showToast(msg) {
 
 // ===== Init =====
 loadData().then(() => {
-  // 数据加载完成后启动轮询同步（10秒一次，多人编辑自动同步）
+  // 数据加载完成后启动轮询同步（15秒一次，使用 API 避免缓存，多人编辑自动同步）
   startRealtimeListener();
 });
 </script>
