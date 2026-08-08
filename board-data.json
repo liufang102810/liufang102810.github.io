@@ -273,6 +273,20 @@
       "note": "",
       "recorder": "",
       "hours": 0
+    },
+    {
+      "id": "item-1786194326568-ukghy3",
+      "title": "沈卓之抚养费案件跟进",
+      "assignee": "潘奥星律师",
+      "priority": "普通",
+      "caseType": "",
+      "status": "待办",
+      "dueDate": null,
+      "createdAt": "2026-08-08T13:05:26.568Z",
+      "completedAt": null,
+      "note": "",
+      "recorder": "",
+      "hours": 0
     }
   ],
   "reviews": [
@@ -287,6 +301,6 @@
     }
   ],
   "errors": [],
-  "lastUpdate": "2026-08-08T13:05:01.959Z",
+  "lastUpdate": "2026-08-08T13:05:26.568Z",
   "updatedBy": "未知用户"
 }
