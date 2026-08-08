@@ -123,6 +123,19 @@
       "completedAt": null,
       "note": "",
       "recorder": ""
+    },
+    {
+      "id": "item-1786188383373-nuxnfe",
+      "title": "陕西中铭案件执行跟进",
+      "assignee": "潘奥星律师",
+      "priority": "重要",
+      "caseType": "",
+      "status": "待办",
+      "dueDate": "2026-08-14T19:26:00",
+      "createdAt": "2026-08-08T11:26:23.373Z",
+      "completedAt": null,
+      "note": "",
+      "recorder": ""
     }
   ],
   "reviews": [
@@ -137,6 +150,6 @@
     }
   ],
   "errors": [],
-  "lastUpdate": "2026-08-08T11:25:49.590Z",
+  "lastUpdate": "2026-08-08T11:26:23.374Z",
   "updatedBy": "未知用户"
 }
