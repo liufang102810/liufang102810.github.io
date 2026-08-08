@@ -203,6 +203,20 @@
       "note": "",
       "recorder": "",
       "hours": 0
+    },
+    {
+      "id": "item-1786194077832-omquod",
+      "title": "农商行案件判决跟进（该案件未经我安排不要联系法院）",
+      "assignee": "刘芳律师",
+      "priority": "普通",
+      "caseType": "",
+      "status": "待办",
+      "dueDate": "2026-10-08T21:00:00",
+      "createdAt": "2026-08-08T13:01:17.832Z",
+      "completedAt": null,
+      "note": "",
+      "recorder": "",
+      "hours": 0
     }
   ],
   "reviews": [
@@ -217,6 +231,6 @@
     }
   ],
   "errors": [],
-  "lastUpdate": "2026-08-08T12:56:10.096Z",
+  "lastUpdate": "2026-08-08T13:01:17.832Z",
   "updatedBy": "未知用户"
 }
