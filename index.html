@@ -67,21 +67,65 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ===== Header ===== */
+/* ===== App Layout (三栏工作台) ===== */
+.app-layout {
+  display: flex; min-height: 100vh;
+}
+/* ===== Left Sidebar (导航栏) ===== */
+.sidebar {
+  width: 200px; min-width: 200px;
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  color: #cbd5e1;
+  display: flex; flex-direction: column;
+  position: sticky; top: 0; height: 100vh; overflow-y: auto;
+  z-index: 200; box-shadow: 4px 0 24px rgba(0,0,0,0.12);
+}
+.sidebar-brand {
+  padding: 20px 18px 16px; border-bottom: 1px solid rgba(255,255,255,0.08);
+  display: flex; align-items: center; gap: 10px;
+}
+.sidebar-brand .brand-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: var(--primary-gradient);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; color: white; font-weight: 800; flex-shrink: 0;
+}
+.sidebar-brand .brand-text { font-size: 13px; font-weight: 700; color: white; line-height: 1.3; }
+.sidebar-brand .brand-sub { font-size: 11px; color: #64748b; margin-top: 2px; }
+.sidebar-nav { padding: 12px 10px; flex: 1; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px; padding: 11px 14px;
+  border-radius: 10px; cursor: pointer; font-size: 13.5px; font-weight: 500;
+  color: #94a3b8; transition: all 0.2s; margin-bottom: 2px;
+  border: none; background: none; width: 100%; text-align: left;
+}
+.nav-item:hover { background: rgba(99,102,241,0.1); color: #e2e8f0; }
+.nav-item.active {
+  background: linear-gradient(135deg, rgba(99,102,241,0.2) 0%, rgba(139,92,246,0.15) 100%);
+  color: white; font-weight: 600; box-shadow: inset 0 0 0 1px rgba(99,102,241,0.25);
+}
+.nav-item .nav-icon { font-size: 17px; width: 22px; text-align: center; flex-shrink: 0; }
+.nav-divider { height: 1px; background: rgba(255,255,255,0.06); margin: 10px 12px; }
+.sidebar-footer {
+  padding: 14px 14px 18px; border-top: 1px solid rgba(255,255,255,0.06);
+  font-size: 11px; color: #475569; text-align: center;
+}
+
+/* ===== Main Content Area ===== */
+.main-area {
+  flex: 1; display: flex; flex-direction: column; min-width: 0;
+  background: var(--bg-gradient);
+}
+
+/* ===== Header (精简版) ===== */
 .header {
   background: linear-gradient(135deg, #ffffff 0%, #fafbff 100%);
   border-bottom: 1px solid var(--border);
-  padding: 20px 32px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 14px;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  box-shadow: 0 4px 20px -8px rgba(30, 41, 59, 0.08);
-  backdrop-filter: blur(12px);
+  padding: 14px 28px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 12px -4px rgba(30,41,59,0.06);
+  backdrop-filter: blur(12px); flex-wrap: wrap;
 }
 .header h1 {
   font-size: 24px;
@@ -115,31 +159,97 @@ body {
   transform: translateY(-1px); box-shadow: var(--shadow-md);
 }
 
-/* ===== Stats Bar ===== */
-.stats-bar { display: flex; gap: 14px; padding: 20px 32px 16px; flex-wrap: wrap; }
+/* ===== Stats Bar (带图标) ===== */
+.stats-bar { display: flex; gap: 14px; padding: 16px 28px 12px; flex-wrap: wrap; }
 .stat-card {
-  background: var(--card-bg); border-radius: var(--radius-lg); padding: 18px 24px;
-  min-width: 130px; box-shadow: var(--shadow); text-align: center;
+  background: var(--card-bg); border-radius: var(--radius-lg); padding: 16px 20px;
+  min-width: 130px; box-shadow: var(--shadow);
   border-top: 4px solid var(--border); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative; overflow: hidden;
+  position: relative; overflow: hidden; display: flex; align-items: center; gap: 14px;
 }
 .stat-card::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
   background: var(--accent-color, var(--border)); opacity: 0.1;
 }
 .stat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
-.stat-card .num { font-size: 32px; font-weight: 800; line-height: 1.1; letter-spacing: -1px; }
-.stat-card .label { font-size: 12px; color: var(--text-light); margin-top: 6px; font-weight: 500; letter-spacing: 0.3px; }
+.stat-icon {
+  width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center;
+  justify-content: center; font-size: 20px; flex-shrink: 0;
+}
+.stat-card .stat-info { display: flex; flex-direction: column; }
+.stat-card .num { font-size: 26px; font-weight: 800; line-height: 1.1; letter-spacing: -1px; }
+.stat-card .label { font-size: 12px; color: var(--text-light); margin-top: 2px; font-weight: 500; letter-spacing: 0.3px; }
 .stat-card.urgent { border-top-color: var(--urgent); } .stat-card.urgent .num { color: var(--urgent); }
+.stat-card.urgent .stat-icon { background: var(--urgent-soft); }
 .stat-card.important { border-top-color: var(--important); } .stat-card.important .num { color: var(--important); }
+.stat-card.important .stat-icon { background: var(--important-soft); }
 .stat-card.todo { border-top-color: var(--todo-border); } .stat-card.todo .num { color: var(--todo-border); }
+.stat-card.todo .stat-icon { background: var(--todo-bg); }
 .stat-card.progress { border-top-color: var(--progress-border); } .stat-card.progress .num { color: var(--progress-border); }
+.stat-card.progress .stat-icon { background: var(--progress-bg); }
 .stat-card.done { border-top-color: var(--done-border); } .stat-card.done .num { color: var(--done-border); }
+.stat-card.done .stat-icon { background: var(--done-bg); }
 .stat-card.review { border-top-color: var(--review-border); } .stat-card.review .num { color: var(--review-border); }
+.stat-card.review .stat-icon { background: var(--review-bg); }
 .stat-card.overdue { border-top-color: var(--urgent); } .stat-card.overdue .num { color: var(--urgent); }
+.stat-card.overdue .stat-icon { background: var(--urgent-soft); }
+.stat-card.week { border-top-color: #8b5cf6; } .stat-card.week .num { color: #8b5cf6; }
+.stat-card.week .stat-icon { background: #fdf4ff; }
 
-/* ===== Quick Add ===== */
-.quick-add { padding: 0 32px 16px; display: flex; gap: 10px; flex-wrap: wrap; }
+/* ===== Greeting Bar (问候栏) ===== */
+.greeting-bar {
+  padding: 18px 28px 8px; display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 10px;
+}
+.greeting-left { display: flex; align-items: baseline; gap: 12px; }
+.greeting-text { font-size: 22px; font-weight: 800; color: var(--text); }
+.greeting-sub { font-size: 13px; color: var(--text-light); font-weight: 400; }
+.greeting-right { display: flex; align-items: center; gap: 12px; font-size: 13px; color: var(--text-mid); }
+
+/* ===== Content Scroll Area ===== */
+.content-scroll { flex: 1; display: flex; flex-direction: column; }
+
+/* ===== Right Panel (日程面板) ===== */
+.right-panel {
+  width: 300px; min-width: 280px; background: var(--card-bg);
+  border-left: 1px solid var(--border); overflow-y: auto;
+  position: sticky; top: 0; height: 100vh;
+  box-shadow: -4px 0 24px rgba(0,0,0,0.04);
+}
+.panel-section { padding: 18px 18px 14px; border-bottom: 1px solid var(--border-soft); }
+.panel-section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px; font-size: 14px; font-weight: 700; color: var(--text);
+}
+.panel-section-header .panel-more {
+  font-size: 12px; color: var(--primary); cursor: pointer; font-weight: 500;
+}
+.panel-section-header .panel-more:hover { text-decoration: underline; }
+.timeline-list { display: flex; flex-direction: column; gap: 6px; }
+.timeline-item {
+  display: flex; gap: 10px; padding: 10px 12px; border-radius: 10px;
+  background: var(--card-bg-soft); border: 1px solid var(--border-soft);
+  transition: all 0.15s; cursor: default;
+}
+.timeline-item:hover { background: white; box-shadow: var(--shadow-xs); transform: translateX(2px); }
+.timeline-time {
+  font-size: 12px; font-weight: 700; color: var(--primary-dark);
+  min-width: 42px; flex-shrink: 0; line-height: 1.7;
+}
+.timeline-dot {
+  width: 8px; height: 8px; border-radius: 50%; margin-top: 6px; flex-shrink: 0;
+}
+.timeline-dot.紧急 { background: var(--urgent); }
+.timeline-dot.重要 { background: var(--important); }
+.timeline-dot.普通 { background: var(--normal); }
+.timeline-dot.已完成 { background: var(--done-border); }
+.timeline-content { font-size: 13px; color: var(--text); line-height: 1.5; }
+.timeline-assignee { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+.panel-empty { text-align: center; padding: 24px 12px; color: var(--text-light); font-size: 13px; }
+.panel-empty .empty-icon { font-size: 28px; margin-bottom: 8px; }
+
+/* ===== Quick Add (适配三栏) ===== */
+.quick-add { padding: 0 28px 14px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
 .quick-add input[type="text"] {
   flex: 1; min-width: 220px; padding: 12px 18px; border: 1.5px solid var(--border);
   border-radius: 12px; font-size: 14px; outline: none; transition: all 0.2s;
@@ -162,7 +272,7 @@ body {
 .quick-add button:active { transform: translateY(0); }
 
 /* ===== Tabs & Filters ===== */
-.toolbar { padding: 0 32px 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+.toolbar { padding: 0 28px 14px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
 .tabs { display: flex; gap: 6px; background: var(--card-bg-soft); padding: 5px; border-radius: 14px; box-shadow: var(--shadow-xs); }
 .tab {
   padding: 9px 22px; border: none; background: transparent; border-radius: 10px;
@@ -182,7 +292,7 @@ body {
 .filters select:hover { border-color: var(--primary); }
 
 /* ===== Board View ===== */
-.board-view { display: flex; gap: 18px; padding: 0 32px 32px; align-items: flex-start; overflow-x: auto; padding-bottom: 28px; }
+.board-view { display: flex; gap: 16px; padding: 0 28px 24px; align-items: flex-start; overflow-x: auto; padding-bottom: 20px; }
 .column { flex: 1; min-width: 260px; background: var(--card-bg); border-radius: var(--radius-lg); box-shadow: var(--shadow); overflow: hidden; border: 1px solid var(--border-soft); }
 .column-header {
   padding: 14px 18px; font-weight: 700; font-size: 15px; display: flex; align-items: center;
@@ -215,10 +325,10 @@ body {
 .assignee-group-header.collapsed ~ .assignee-group-items { display: none; }
 .assignee-group-items { transition: all 0.2s; }
 
-/* ===== Card ===== */
+/* ===== Card (精细化卡片 - 备注显眼) ===== */
 .card {
-  background: var(--card-bg); border: 1px solid var(--border-soft); border-radius: var(--radius-sm);
-  padding: 14px 16px; margin-bottom: 10px; box-shadow: var(--shadow-xs);
+  background: var(--card-bg); border: 1px solid var(--border-soft); border-radius: var(--radius);
+  padding: 16px 18px; margin-bottom: 10px; box-shadow: var(--shadow);
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); position: relative;
   border-left: 4px solid var(--normal);
 }
@@ -230,17 +340,40 @@ body {
 .card.completed .card-title { text-decoration: line-through; }
 .card.review-pending { border-left-color: var(--review-border) !important; background: #fdfaff; box-shadow: 0 0 0 1px #e9d5ff; }
 .card.review-pending .card-title::after { content: ' 🔍'; font-size: 13px; }
-.card-title { font-size: 14px; font-weight: 600; margin-bottom: 10px; word-break: break-word; color: var(--text); line-height: 1.5; }
-.card-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 12px; color: var(--text-light); }
+
+/* 卡片标题区 - 更大更醒目 */
+.card-title {
+  font-size: 15px; font-weight: 700; margin-bottom: 10px;
+  word-break: break-word; color: var(--text); line-height: 1.5;
+  display: flex; align-items: flex-start; gap: 8px;
+}
+.card-title .title-text { flex: 1; }
+
+/* 卡片元信息行 */
+.card-meta { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; font-size: 12px; color: var(--text-light); }
 .card-assignee { background: #eef2ff; color: #4338ca; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
 .card-recorder { background: #f0fdf4; color: #15803d; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 500; }
 .card-due { font-size: 12px; font-weight: 500; }
 .card-due.overdue { color: var(--urgent); font-weight: 700; }
 .card-due.today { color: var(--important); font-weight: 700; }
-.card-note { font-size: 12px; color: var(--text-mid); margin-top: 8px; padding: 8px 10px; background: var(--card-bg-soft); border-radius: var(--radius-sm); white-space: pre-wrap; word-break: break-word; border: 1px solid var(--border-soft); }
-.card-review-info { font-size: 12px; margin-top: 8px; padding: 8px 10px; background: var(--review-bg); border-radius: var(--radius-sm); color: var(--review-border); border: 1px solid #e9d5ff; }
+
+/* ===== 备注栏 - 显眼设计 ===== */
+.card-note {
+  font-size: 13px; color: #334155; margin-top: 10px; padding: 10px 14px;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: var(--radius-sm); white-space: pre-wrap; word-break: break-word;
+  border: 1px dashed #cbd5e1; line-height: 1.7;
+  position: relative; display: flex; gap: 8px;
+}
+.card-note::before {
+  content: '📝'; font-size: 13px; flex-shrink: 0; margin-top: 1px;
+}
+.card-note .note-text { flex: 1; }
+
+/* 复核信息 */
+.card-review-info { font-size: 12px; margin-top: 8px; padding: 8px 12px; background: var(--review-bg); border-radius: var(--radius-sm); color: var(--review-border); border: 1px solid #e9d5ff; }
 .card-review-info b { font-weight: 700; }
-.card-review-comment { font-size: 12px; margin-top: 6px; padding: 8px 10px; background: #fefce8; border-radius: var(--radius-sm); color: #854d0e; border: 1px solid #fde68a; white-space: pre-wrap; word-break: break-word; }
+.card-review-comment { font-size: 12px; margin-top: 6px; padding: 8px 12px; background: #fefce8; border-radius: var(--radius-sm); color: #854d0e; border: 1px solid #fde68a; white-space: pre-wrap; word-break: break-word; }
 .priority-tag { padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; color: white; letter-spacing: 0.3px; }
 .priority-tag.紧急 { background: linear-gradient(135deg, #ef4444, #dc2626); }
 .priority-tag.重要 { background: linear-gradient(135deg, #f59e0b, #d97706); }
@@ -259,7 +392,7 @@ body {
 .empty-col { text-align: center; padding: 48px 16px; color: var(--text-light); font-size: 13px; }
 
 /* ===== List View ===== */
-.list-view { padding: 0 32px 32px; }
+.list-view { padding: 0 28px 24px; }
 .date-group { margin-bottom: 28px; }
 .date-group-header {
   font-size: 17px; font-weight: 700; padding: 10px 0; margin-bottom: 10px;
@@ -285,7 +418,7 @@ body {
 .list-item-actions button:hover { background: var(--card-bg-soft); color: var(--text); }
 
 /* ===== Member View ===== */
-.member-view { padding: 0 32px 32px; }
+.member-view { padding: 0 28px 24px; }
 .member-card { background: var(--card-bg); border-radius: var(--radius-lg); box-shadow: var(--shadow); padding: 22px 24px; margin-bottom: 18px; border: 1px solid var(--border-soft); transition: all 0.25s; }
 .member-card:hover { box-shadow: var(--shadow-md); }
 .member-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 10px; }
@@ -344,7 +477,7 @@ body {
 .modal-actions .btn-save:hover { transform: translateY(-1px); box-shadow: 0 6px 16px -2px rgba(99, 102, 241, 0.5); }
 
 /* ===== Review View (每日复盘) ===== */
-.review-view { padding: 0 28px 28px; }
+.review-view { padding: 0 24px 24px; }
 .review-date-group { margin-bottom: 28px; }
 .review-date-header {
   font-size: 17px; font-weight: 700; padding: 10px 0; margin-bottom: 10px;
@@ -384,7 +517,7 @@ body {
 .review-add-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px -2px rgba(139, 92, 246, 0.5); }
 
 /* ===== Error Notebook View (经验总结) ===== */
-.error-view { padding: 0 28px 28px; }
+.error-view { padding: 0 24px 24px; }
 .error-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 16px; }
 .error-card {
   background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow);
@@ -424,7 +557,7 @@ body {
 .error-filter-bar select { padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; background: white; cursor: pointer; outline: none; }
 
 /* ===== Back to Home Button ===== */
-.back-home-bar { padding: 12px 32px 0; }
+.back-home-bar { padding: 10px 28px 0; }
 .back-home-btn { 
   background: var(--card-bg); 
   border: 1px solid var(--border); 
@@ -475,7 +608,7 @@ body {
 /* ===== Share Banner ===== */
 .share-banner {
   background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%); color: white;
-  padding: 12px 32px; font-size: 13px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+  padding: 10px 28px; font-size: 13px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
   font-weight: 500;
 }
 .share-banner .share-text { opacity: 0.95; }
@@ -488,7 +621,7 @@ body {
 
 /* ===== Overdue Banner ===== */
 .overdue-banner {
-  margin: 0 32px 16px; background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  margin: 0 28px 12px; background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
   border: 1px solid #fecaca; border-left: 4px solid var(--urgent);
   border-radius: var(--radius); padding: 14px 20px; display: none;
   animation: slideDown 0.3s ease;
@@ -504,7 +637,7 @@ body {
 
 /* ===== Sync Error Banner ===== */
 .sync-error-banner {
-  margin: 0 32px 16px; background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  margin: 0 28px 12px; background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
   border: 1px solid #fdba74; border-left: 4px solid #f97316;
   border-radius: var(--radius); padding: 14px 20px; display: none;
   animation: slideDown 0.3s ease;
@@ -532,7 +665,7 @@ body {
 .card.overdue-card .card-due.overdue { background: var(--urgent); color: white; padding: 2px 8px; border-radius: 6px; }
 
 /* ===== Calendar View ===== */
-.calendar-view { padding: 0 32px 32px; }
+.calendar-view { padding: 0 28px 24px; }
 .calendar-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
 .calendar-nav { display: flex; align-items: center; gap: 12px; }
 .calendar-nav button {
@@ -599,9 +732,76 @@ body {
 
 /* ===== Week stat card ===== */
 .stat-card.week { border-top-color: #8b5cf6; } .stat-card.week .num { color: #8b5cf6; }
+
+/* ===== Responsive ===== */
+@media (max-width: 1100px) {
+  .right-panel { display: none; }
+  .sidebar { width: 64px; min-width: 64px; }
+  .sidebar-brand .brand-text, .sidebar-brand .brand-sub, .nav-item span:not(.nav-icon), .sidebar-footer { display: none; }
+  .sidebar-brand { justify-content: center; padding: 16px 10px; }
+  .nav-item { justify-content: center; padding: 12px; }
+  .nav-item .nav-icon { font-size: 20px; width: auto; }
+}
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .greeting-bar { flex-direction: column; align-items: flex-start; }
+  .stats-bar { gap: 10px; }
+  .stat-card { min-width: 100px; padding: 12px 14px; }
+  .stat-card .stat-icon { display: none; }
+  .quick-add { flex-direction: column; align-items: stretch; }
+  .quick-add input[type="text"] { min-width: auto; }
+  .toolbar { flex-direction: column; align-items: stretch; }
+  .tabs { overflow-x: auto; flex-wrap: nowrap; }
+  .board-view { flex-direction: column; }
+  .column { min-width: auto; }
+}
 </style>
 </head>
 <body>
+
+<div class="app-layout">
+
+<!-- ===== 左侧导航栏 ===== -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon">⚖</div>
+    <div>
+      <div class="brand-text" id="sidebarBrandName">律师工作台</div>
+      <div class="brand-sub" id="sidebarBrandSub">日程协同看板</div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <button class="nav-item active" data-view="board" onclick="switchView('board')">
+      <span class="nav-icon">📋</span><span>看板总览</span>
+    </button>
+    <button class="nav-item" data-view="calendar" onclick="switchView('calendar')">
+      <span class="nav-icon">📅</span><span>日历视图</span>
+    </button>
+    <button class="nav-item" data-view="list" onclick="switchView('list')">
+      <span class="nav-icon">📝</span><span>列表视图</span>
+    </button>
+    <button class="nav-item" data-view="member" onclick="switchView('member')">
+      <span class="nav-icon">👥</span><span>成员视图</span>
+    </button>
+    <div class="nav-divider"></div>
+    <button class="nav-item" data-view="review" onclick="switchView('review')">
+      <span class="nav-icon">📊</span><span>每日复盘</span>
+    </button>
+    <button class="nav-item" data-view="error" onclick="switchView('error')">
+      <span class="nav-icon">💡</span><span>经验总结</span>
+    </button>
+    <div class="nav-divider"></div>
+    <button class="nav-item" onclick="openSettings()">
+      <span class="nav-icon">⚙</span><span>设置</span>
+    </button>
+  </nav>
+  <div class="sidebar-footer">
+    刘芳律师团队 · v2.0
+  </div>
+</aside>
+
+<!-- ===== 主内容区 ===== -->
+<main class="main-area">
 
 <!-- Share Banner -->
 <div class="share-banner">
@@ -615,7 +815,17 @@ body {
     <span class="sync-status" id="syncStatus">同步中...</span>
     <span id="lastUpdate">加载中...</span>
     <button class="refresh-btn" onclick="loadData()">↻ 刷新</button>
-    <button class="settings-btn" onclick="openSettings()">⚙ 设置</button>
+  </div>
+</div>
+
+<!-- Greeting Bar (问候栏) -->
+<div class="greeting-bar" id="greetingBar">
+  <div class="greeting-left">
+    <span class="greeting-text" id="greetingText">下午好</span>
+    <span class="greeting-sub" id="greetingDate"></span>
+  </div>
+  <div class="greeting-right">
+    <span id="greetingSummary"></span>
   </div>
 </div>
 
@@ -653,7 +863,8 @@ body {
   <button onclick="quickAdd()">添加</button>
 </div>
 
-<div class="toolbar">
+<!-- Toolbar (隐藏原来的tab栏，保留筛选) -->
+<div class="toolbar" style="display:none;">
   <div class="tabs">
     <button class="tab active" onclick="switchView('board')">看板视图</button>
     <button class="tab" onclick="switchView('calendar')">日历视图</button>
@@ -675,7 +886,58 @@ body {
   </div>
 </div>
 
+<!-- 筛选栏（独立显示） -->
+<div class="toolbar" id="filterToolbar">
+  <div class="filters" style="margin-left:auto;">
+    <select id="filterPriority2" onchange="render()">
+      <option value="">全部优先级</option>
+      <option value="紧急">紧急</option>
+      <option value="重要">重要</option>
+      <option value="普通">普通</option>
+    </select>
+    <select id="filterAssignee2" onchange="render()">
+      <option value="">全部成员</option>
+    </select>
+  </div>
+</div>
+
+<div class="content-scroll">
 <div id="content"></div>
+</div>
+
+</main><!-- end .main-area -->
+
+<!-- ===== 右侧面板（日程与提醒） ===== -->
+<aside class="right-panel" id="rightPanel">
+  <div class="panel-section">
+    <div class="panel-section-header">
+      📅 日程与提醒
+      <span class="panel-more" onclick="switchView('calendar')">查看全部 ›</span>
+    </div>
+    <div id="timelineList" class="timeline-list">
+      <div class="panel-empty"><div class="empty-icon">📭</div>今日暂无日程安排</div>
+    </div>
+  </div>
+  <div class="panel-section">
+    <div class="panel-section-header">
+      ⏰ 待办速览
+      <span class="panel-more" onclick="switchView('board')">查看全部 ›</span>
+    </div>
+    <div id="todoQuickList" class="timeline-list">
+      <div class="panel-empty"><div class="empty-icon">✅</div>暂无待办事项</div>
+    </div>
+  </div>
+  <div class="panel-section">
+    <div class="panel-section-header">
+      🔴 紧急事项
+    </div>
+    <div id="urgentQuickList" class="timeline-list">
+      <div class="panel-empty"><div class="empty-icon">😌</div>暂无紧急事项</div>
+    </div>
+  </div>
+</aside>
+
+</div><!-- end .app-layout -->
 
 <!-- Settings Modal -->
 <div class="modal-overlay" id="settingsModal">
@@ -1125,9 +1387,13 @@ function renderStats() {
     {cls: 'week', num: stats.weekDue, label: '本周到期'},
     {cls: 'done', num: stats.completed, label: '已完成'},
   ];
+  const iconMap = { todo: '📋', progress: '🔄', urgent: '🚨', overdue: '⚠️', week: '📅', done: '✅' };
   bar.innerHTML = cards.map(c =>
-    `<div class="stat-card ${c.cls}"><div class="num">${c.num}</div><div class="label">${c.label}</div></div>`
+    `<div class="stat-card ${c.cls}"><div class="stat-icon">${iconMap[c.cls]||''}</div><div class="stat-info"><div class="num">${c.num}</div><div class="label">${c.label}</div></div></div>`
   ).join('');
+  // 同时更新问候栏和右侧面板
+  renderGreetingBar();
+  renderRightPanel();
 }
 
 function getMemberNames() {
@@ -1136,16 +1402,115 @@ function getMemberNames() {
   return [...new Set([...configMembers, ...itemMembers])].sort();
 }
 
+// ===== 问候栏 =====
+function renderGreetingBar() {
+  const now = new Date();
+  const hour = now.getHours();
+  let greeting = '你好';
+  if (hour < 6) greeting = '夜深了';
+  else if (hour < 9) greeting = '早上好';
+  else if (hour < 12) greeting = '上午好';
+  else if (hour < 14) greeting = '中午好';
+  else if (hour < 18) greeting = '下午好';
+  else if (hour < 22) greeting = '晚上好';
+  else greeting = '夜深了';
+
+  const userName = currentUser || (cloudData.members && cloudData.members[0]) || '';
+  const dateStr = now.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' });
+  const items = cloudData.items || [];
+  const todoCount = items.filter(i => i.status !== '已完成').length;
+  const urgentCount = items.filter(i => i.priority === '紧急' && i.status !== '已完成').length;
+
+  const gt = document.getElementById('greetingText');
+  const gd = document.getElementById('greetingDate');
+  const gs = document.getElementById('greetingSummary');
+  if (gt) gt.textContent = `${greeting}，${userName}`;
+  if (gd) gd.textContent = dateStr;
+  if (gs) gs.textContent = `今日 ${todoCount} 项待办${urgentCount > 0 ? ` · ${urgentCount} 项紧急` : ''}`;
+
+  // 更新侧边栏品牌名
+  const brandName = document.getElementById('sidebarBrandName');
+  if (brandName && cloudData.boardName) {
+    brandName.textContent = cloudData.boardName.length > 8 ? cloudData.boardName.substring(0,8)+'…' : cloudData.boardName;
+  }
+}
+
+// ===== 右侧面板（日程与提醒）=====
+function renderRightPanel() {
+  const items = (cloudData.items || []).filter(i => i.status !== '已完成');
+  const now = new Date();
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const todayEnd = new Date(todayStart.getTime() + 86400000);
+
+  // 今日日程时间线
+  const todayItems = items
+    .filter(i => { if (!i.dueDate) return false; const d = new Date(i.dueDate); return d >= todayStart && d < todayEnd; })
+    .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+  const tl = document.getElementById('timelineList');
+  if (tl) {
+    if (todayItems.length === 0) {
+      tl.innerHTML = '<div class="panel-empty"><div class="empty-icon">📭</div>今日暂无日程安排</div>';
+    } else {
+      tl.innerHTML = todayItems.map(item => {
+        const timeStr = item.dueDate ? new Date(item.dueDate).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }) : '';
+        return `<div class="timeline-item">
+          <span class="timeline-time">${timeStr}</span>
+          <span class="timeline-dot ${item.priority}"></span>
+          <div class="timeline-content">
+            <div>${esc(item.title)}</div>
+            <div class="timeline-assignee">@${esc(item.assignee)}${item.hours ? ` · ${formatHours(item.hours)}` : ''}</div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+  }
+
+  // 待办速览（最近5条）
+  const todoItems = items.filter(i => i.status === '待办' || i.status === '进行中').slice(0, 5);
+  const tq = document.getElementById('todoQuickList');
+  if (tq) {
+    if (todoItems.length === 0) {
+      tq.innerHTML = '<div class="panel-empty"><div class="empty-icon">✅</div>暂无待办事项</div>';
+    } else {
+      tq.innerHTML = todoItems.map(item =>
+        `<div class="timeline-item" style="cursor:pointer;" onclick="document.getElementById('quickTitle').value='${esc(item.title).replace(/'/g,"\\'")}';switchView('board');">
+          <span class="timeline-dot ${item.priority}"></span>
+          <div class="timeline-content"><div>${esc(item.title)}</div><div class="timeline-assignee">@${esc(item.assignee)}</div></div>
+        </div>`
+      ).join('');
+    }
+  }
+
+  // 紧急事项
+  const urgentItems = items.filter(i => i.priority === '紧急');
+  const uq = document.getElementById('urgentQuickList');
+  if (uq) {
+    if (urgentItems.length === 0) {
+      uq.innerHTML = '<div class="panel-empty"><div class="empty-icon">😌</div>暂无紧急事项</div>';
+    } else {
+      uq.innerHTML = urgentItems.map(item =>
+        `<div class="timeline-item" style="border-left-color:#ef4444;background:#fef2f2;">
+          <span class="timeline-dot 紧急"></span>
+          <div class="timeline-content"><div style="color:#991b1b;font-weight:600;">${esc(item.title)}</div><div class="timeline-assignee">@${esc(item.assignee)}${item.dueDate ? ` · 截止${new Date(item.dueDate).toLocaleDateString('zh-CN',{month:'numeric',day:'numeric'})}` : ''}</div></div>
+        </div>`
+      ).join('');
+    }
+  }
+}
+
 function updateFilterOptions() {
   const names = getMemberNames();
   const filterSel = document.getElementById('filterAssignee');
+  const filterSel2 = document.getElementById('filterAssignee2');
   const addSel = document.getElementById('quickAssignee');
   const recSel = document.getElementById('quickRecorder');
-  const curFilter = filterSel.value;
+  const curFilter = filterSel ? filterSel.value : '';
+  const curFilter2 = filterSel2 ? filterSel2.value : '';
   const curAdd = addSel.value;
   const curRec = recSel.value;
-  filterSel.innerHTML = '<option value="">全部成员</option>' + names.map(n => `<option value="${n}">${n}</option>`).join('');
-  filterSel.value = curFilter;
+  const memberOpts = '<option value="">全部成员</option>' + names.map(n => `<option value="${n}">${n}</option>`).join('');
+  if (filterSel) { filterSel.innerHTML = memberOpts; filterSel.value = curFilter; }
+  if (filterSel2) { filterSel2.innerHTML = memberOpts; filterSel2.value = curFilter2; }
   addSel.innerHTML = '<option value="">负责人</option>' + names.map(n => `<option value="${n}">${n}</option>`).join('');
   addSel.value = curAdd;
   recSel.innerHTML = '<option value="">录入人</option>' + names.map(n => `<option value="${n}">${n}</option>`).join('');
@@ -1255,32 +1620,37 @@ async function saveEdit() {
 
 // ===== Filtering =====
 function getFilteredItems() {
-  const fp = document.getElementById('filterPriority').value;
-  const fa = document.getElementById('filterAssignee').value;
+  const fp = (document.getElementById('filterPriority2') || document.getElementById('filterPriority')).value;
+  const fa = (document.getElementById('filterAssignee2') || document.getElementById('filterAssignee')).value;
   return (cloudData.items || []).filter(i => (!fp || i.priority === fp) && (!fa || i.assignee === fa));
 }
 
 // ===== View Switching =====
 function switchView(view) {
   currentView = view;
+  // 更新左侧导航栏高亮
+  document.querySelectorAll('.nav-item[data-view]').forEach(n => {
+    n.classList.toggle('active', n.dataset.view === view);
+  });
+  // 更新 tab 栏（隐藏的，保持兼容）
   const allViews = ['board','calendar','list','member','review','error'];
   document.querySelectorAll('.tab').forEach((t, i) => {
     t.classList.toggle('active', allViews[i] === view);
   });
   // 控制工具栏显示：看板/日历/列表/成员显示快速添加和筛选，复盘/经验总结隐藏
   const quickAdd = document.querySelector('.quick-add');
-  const toolbar = document.querySelector('.toolbar');
+  const filterToolbar = document.getElementById('filterToolbar');
   const statsBar = document.getElementById('statsBar');
   const overdueBanner = document.getElementById('overdueBanner');
   if (view === 'review' || view === 'error') {
     if (quickAdd) quickAdd.style.display = 'none';
+    if (filterToolbar) filterToolbar.style.display = 'none';
     if (statsBar) statsBar.style.display = 'none';
-    if (toolbar) toolbar.style.display = 'none';
     if (overdueBanner) overdueBanner.style.display = 'none';
   } else {
     if (quickAdd) quickAdd.style.display = '';
+    if (filterToolbar) filterToolbar.style.display = '';
     if (statsBar) statsBar.style.display = '';
-    if (toolbar) toolbar.style.display = '';
     renderOverdueBanner();
   }
   render();
@@ -1391,7 +1761,7 @@ function renderCard(item, hideAssignee) {
       ${recorderTag(item)}
       ${dueInfo(item.dueDate, item.status)}
     </div>
-    ${item.note ? `<div class="card-note">📝 ${esc(item.note)}</div>` : ''}
+    ${item.note ? `<div class="card-note"><span class="note-text">${esc(item.note)}</span></div>` : ''}
     ${reviewInfo}
     ${reviewComment}
     ${cardActions(item)}
