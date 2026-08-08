@@ -6,23 +6,9 @@
     "潘奥星律师"
   ],
   "manager": "刘芳律师",
-  "items": [
-    {
-      "id": "item-1786184936096-0mjn4i",
-      "title": "开会",
-      "assignee": "刘芳律师",
-      "priority": "普通",
-      "caseType": "",
-      "status": "待办",
-      "dueDate": "2026-08-10T18:28:00",
-      "createdAt": "2026-08-08T10:28:56.096Z",
-      "completedAt": null,
-      "note": "",
-      "recorder": ""
-    }
-  ],
+  "items": [],
   "reviews": [],
   "errors": [],
-  "lastUpdate": "2026-08-08T10:28:56.097Z",
+  "lastUpdate": "2026-08-08T10:29:07.135Z",
   "updatedBy": "未知用户"
 }
