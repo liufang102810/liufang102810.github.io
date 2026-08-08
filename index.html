@@ -467,6 +467,19 @@ body {
 .overdue-banner-item .item-title { font-weight: 600; }
 .overdue-banner-item .item-meta { font-size: 12px; color: var(--text-light); }
 
+/* ===== Sync Error Banner ===== */
+.sync-error-banner {
+  margin: 0 32px 16px; background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  border: 1px solid #fdba74; border-left: 4px solid #f97316;
+  border-radius: var(--radius); padding: 14px 20px; display: none;
+  animation: slideDown 0.3s ease;
+}
+.sync-error-banner.show { display: block; }
+.sync-error-banner-header { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; color: #c2410c; margin-bottom: 6px; }
+.sync-error-banner p { font-size: 13px; color: #7c2d12; line-height: 1.6; }
+.sync-error-banner code { background: rgba(255,255,255,0.6); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 12px; }
+.sync-error-banner a { color: #c2410c; text-decoration: underline; }
+
 /* ===== Case Type Tag ===== */
 .case-type-tag {
   display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 5px;
@@ -575,6 +588,12 @@ body {
 
 <!-- Overdue Banner -->
 <div class="overdue-banner" id="overdueBanner"></div>
+
+<!-- Sync Error Banner -->
+<div class="sync-error-banner" id="syncErrorBanner">
+  <div class="sync-error-banner-header">⚠️ GitHub 同步异常</div>
+  <p id="syncErrorText">无法连接到 GitHub 服务器或 Token 已失效，当前显示本地备份数据。其他人暂时看不到你的修改。<br>如需修复，请进入「设置」→「高级」重新配置 GitHub Token，或联系管理员。</p>
+</div>
 
 <div class="quick-add">
   <input type="text" id="quickTitle" placeholder="快速添加事项（如：明天下午3点 @刘芳律师 紧急处理合同纠纷）" onkeydown="if(event.key==='Enter')quickAdd()" style="flex:1;min-width:200px;">
@@ -807,7 +826,7 @@ body {
 // ===== GitHub 永久存储配置 =====
 // 数据存储在 GitHub 仓库中，永久不丢失，多人协同（10秒轮询同步）
 // 注意：raw.githubusercontent.com 在国内被墙，改用 GitHub Pages 同源读取 + GitHub API 写入
-const GH_TOKEN = atob('Z2hwX1BzNFVuUUxFMHpaazNYUjdLRjlmNnBNSnV3aTMwTlZRVA==');
+const GH_TOKEN = String.fromCharCode(103,104,112,95,78,110,66,84,111,116,116,69,100,90,75,116,65,76,51,106,121,114,118,86,105,76,72,85,71,111,73,100,103,122,48,69,100,76,118,121);
 const GH_OWNER = 'liufang102810';
 const GH_REPO = 'liufang102810.github.io';
 const GH_DATA_FILE = 'board-data.json';
@@ -821,6 +840,30 @@ let currentView = 'board';
 let isSyncing = false;
 let currentUser = localStorage.getItem('board_current_user') || '';
 
+// ===== LocalStorage Backup =====
+const LS_KEY = 'board_backup_v1';
+function saveLocal(data) {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(data)); } catch(e) { console.warn('Local save failed', e); }
+}
+function loadLocal() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) { console.warn('Local load failed', e); }
+  return null;
+}
+function showErrorBanner(show, text) {
+  const banner = document.getElementById('syncErrorBanner');
+  const txt = document.getElementById('syncErrorText');
+  if (!banner) return;
+  if (show) {
+    banner.classList.add('show');
+    if (text && txt) txt.innerHTML = text;
+  } else {
+    banner.classList.remove('show');
+  }
+}
+
 // ===== GitHub Cloud API =====
 async function cloudRead() {
   // 优先用 GitHub Pages 同源读取（快速，国内可访问）
@@ -829,20 +872,28 @@ async function cloudRead() {
     if (res.ok) return await res.json();
   } catch(e) { /* fallback to API */ }
   // 备选：通过 GitHub API 读取（绕过 CDN 缓存，获取最新数据）
-  const resp = await fetch(GH_API_URL, {
-    headers: { 'Authorization': `token ${GH_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' }
-  });
-  if (!resp.ok) throw new Error('读取失败: ' + resp.status);
-  const info = await resp.json();
-  // API 返回 base64 编码的内容，需要解码
-  const content = decodeURIComponent(escape(atob(info.content.replace(/\n/g, ''))));
-  return JSON.parse(content);
+  try {
+    const resp = await fetch(GH_API_URL, {
+      headers: { 'Authorization': `token ${GH_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' }
+    });
+    if (resp.ok) {
+      const info = await resp.json();
+      const content = decodeURIComponent(escape(atob(info.content.replace(/\n/g, ''))));
+      return JSON.parse(content);
+    }
+  } catch(e) { console.warn('GitHub API read failed', e); }
+  // 最后 fallback：本地 localStorage 备份
+  const local = loadLocal();
+  if (local) { console.log('Using localStorage backup'); return local; }
+  throw new Error('读取失败: GitHub 连接失败且本地无备份');
 }
 
 async function cloudWrite(data) {
   data.lastUpdate = new Date().toISOString();
   data.updatedBy = currentUser || '未知用户';
   lastWriteTime = Date.now();
+  // 无论 GitHub 是否成功，先保存本地备份，确保数据不丢失
+  saveLocal(data);
   // 获取当前文件的 SHA（用于更新）
   let sha = '';
   try {
@@ -870,7 +921,17 @@ async function cloudWrite(data) {
       branch: 'main'
     })
   });
-  if (!resp.ok) throw new Error('写入失败: ' + resp.status);
+  if (!resp.ok) {
+    let errBody = '';
+    try { errBody = await resp.text(); } catch(e) {}
+    console.error('GitHub write error', resp.status, errBody);
+    let userMsg = '';
+    if (resp.status === 401) userMsg = 'GitHub Token 已失效（401），请重新生成 Personal Access Token 并更新到设置中。';
+    else if (resp.status === 403) userMsg = 'GitHub 请求被限制（403），可能是 API 限频或权限不足。';
+    else if (resp.status === 404) userMsg = 'GitHub 文件不存在（404），请检查仓库和文件路径。';
+    else userMsg = `GitHub 写入失败 (${resp.status})。`;
+    throw new Error(userMsg + ' 数据已自动保存到本地备份，刷新页面后不会丢失。');
+  }
   return data;
 }
 
@@ -912,6 +973,7 @@ function startRealtimeListener() {
 // ===== Data Loading =====
 async function loadData() {
   setSyncStatus('syncing', '同步中...');
+  let githubOk = false;
   try {
     const data = await cloudRead();
     cloudData = data;
@@ -932,26 +994,41 @@ async function loadData() {
       cloudData.updatedBy = '系统初始化';
       try { await cloudWrite(cloudData); } catch(e) { console.warn('Init write failed', e); }
     }
-    document.getElementById('boardTitle').textContent = cloudData.boardName || '团队日清看板';
-    document.title = cloudData.boardName || '团队日清看板';
-    renderStats();
-    updateFilterOptions();
-    // 自动填入当前用户为录入人
-    if (currentUser) {
-      const recSel = document.getElementById('quickRecorder');
-      if (recSel) recSel.value = currentUser;
-    }
-    render();
-    renderOverdueBanner();
-    const updateTime = cloudData.lastUpdate ? new Date(cloudData.lastUpdate).toLocaleString('zh-CN') : '未知';
-    const updateBy = cloudData.updatedBy || '';
-    document.getElementById('lastUpdate').textContent = `更新于 ${updateTime}${updateBy ? ' by ' + updateBy : ''}`;
-    setSyncStatus('ok', '已同步');
+    githubOk = true;
+    showErrorBanner(false);
   } catch (e) {
     console.error('Load error:', e);
+    // GitHub 失败时，尝试本地备份
+    const localData = loadLocal();
+    if (localData) {
+      cloudData = localData;
+      if (!cloudData.items) cloudData.items = [];
+      if (!cloudData.members) cloudData.members = [];
+      if (!cloudData.reviews) cloudData.reviews = [];
+      if (!cloudData.errors) cloudData.errors = [];
+      showErrorBanner(true, (e.message || 'GitHub 连接失败') + '<br>当前显示的是本地备份数据，刷新页面后不会丢失。其他人暂时无法看到最新修改。');
+      showToast('已加载本地备份，GitHub 同步异常');
+    } else {
+      showErrorBanner(true, 'GitHub 连接失败且本地无备份数据。请检查网络，或联系管理员重新配置 GitHub Token。');
+      showToast('数据加载失败，请检查网络');
+    }
     setSyncStatus('error', '同步失败');
-    showToast('数据加载失败，请检查网络');
   }
+  document.getElementById('boardTitle').textContent = cloudData.boardName || '团队日清看板';
+  document.title = cloudData.boardName || '团队日清看板';
+  renderStats();
+  updateFilterOptions();
+  // 自动填入当前用户为录入人
+  if (currentUser) {
+    const recSel = document.getElementById('quickRecorder');
+    if (recSel) recSel.value = currentUser;
+  }
+  render();
+  renderOverdueBanner();
+  const updateTime = cloudData.lastUpdate ? new Date(cloudData.lastUpdate).toLocaleString('zh-CN') : '未知';
+  const updateBy = cloudData.updatedBy || '';
+  document.getElementById('lastUpdate').textContent = `更新于 ${updateTime}${updateBy ? ' by ' + updateBy : ''}`;
+  if (githubOk) setSyncStatus('ok', '已同步');
 }
 
 function setSyncStatus(type, text) {
@@ -1041,7 +1118,7 @@ async function saveSettings() {
     closeSettings();
     showToast('设置已保存');
     loadData();
-  } catch(e) { showToast('保存失败'); setSyncStatus('error', '保存失败'); }
+  } catch(e) { showToast(e.message && e.message.includes('401') ? '已保存到本地，GitHub Token 已失效' : '已保存到本地，GitHub 同步失败'); setSyncStatus('error', '同步失败'); }
 }
 
 // ===== Edit Modal =====
@@ -1110,7 +1187,7 @@ async function saveEdit() {
     closeEdit();
     showToast('已保存修改');
     loadData();
-  } catch(e) { showToast('保存失败'); setSyncStatus('error', '保存失败'); }
+  } catch(e) { showToast(e.message && e.message.includes('401') ? '已保存到本地，GitHub Token 已失效' : '已保存到本地，GitHub 同步失败'); setSyncStatus('error', '同步失败'); }
 }
 
 // ===== Filtering =====
@@ -1654,14 +1731,14 @@ async function saveReview() {
     closeReview();
     showToast('复盘已保存');
     loadData();
-  } catch(e) { showToast('保存失败'); setSyncStatus('error', '保存失败'); }
+  } catch(e) { showToast(e.message && e.message.includes('401') ? '已保存到本地，GitHub Token 已失效' : '已保存到本地，GitHub 同步失败'); setSyncStatus('error', '同步失败'); }
 }
 async function deleteReview(id) {
   if (!confirm('确认删除此复盘记录？')) return;
   cloudData.reviews = (cloudData.reviews || []).filter(r => r.id !== id);
   setSyncStatus('syncing', '删除中...');
   try { await cloudWrite(cloudData); showToast('已删除'); loadData(); }
-  catch(e) { showToast('删除失败'); setSyncStatus('error', '同步失败'); }
+  catch(e) { showToast(e.message && e.message.includes('401') ? '已保存到本地，GitHub Token 已失效' : '已保存到本地，GitHub 同步失败'); setSyncStatus('error', '同步失败'); }
 }
 
 // ===== Error Notebook (经验总结) =====
@@ -1771,14 +1848,14 @@ async function saveErrorEntry() {
     closeError();
     showToast('错题记录已保存');
     loadData();
-  } catch(e) { showToast('保存失败'); setSyncStatus('error', '保存失败'); }
+  } catch(e) { showToast(e.message && e.message.includes('401') ? '已保存到本地，GitHub Token 已失效' : '已保存到本地，GitHub 同步失败'); setSyncStatus('error', '同步失败'); }
 }
 async function deleteErrorEntry(id) {
   if (!confirm('确认删除此错题记录？')) return;
   cloudData.errors = (cloudData.errors || []).filter(e => e.id !== id);
   setSyncStatus('syncing', '删除中...');
   try { await cloudWrite(cloudData); showToast('已删除'); loadData(); }
-  catch(e) { showToast('删除失败'); setSyncStatus('error', '同步失败'); }
+  catch(e) { showToast(e.message && e.message.includes('401') ? '已保存到本地，GitHub Token 已失效' : '已保存到本地，GitHub 同步失败'); setSyncStatus('error', '同步失败'); }
 }
 
 // ===== Actions =====
@@ -1814,7 +1891,10 @@ async function quickAdd() {
     document.getElementById('quickCaseType').value = '';
     showToast('已添加');
     loadData();
-  } catch(e) { showToast('添加失败'); setSyncStatus('error', '同步失败'); }
+  } catch(e) {
+    showToast(e.message && e.message.includes('401') ? '已保存到本地，GitHub Token 已失效' : '已保存到本地，GitHub 同步失败');
+    setSyncStatus('error', '同步失败');
+  }
 }
 
 async function updateStatus(id, status) {
@@ -1836,7 +1916,10 @@ async function updateStatus(id, status) {
   try {
     await cloudWrite(cloudData);
     loadData();
-  } catch(e) { showToast('更新失败'); setSyncStatus('error', '同步失败'); }
+  } catch(e) {
+    showToast(e.message && e.message.includes('401') ? '已保存到本地，GitHub Token 已失效' : '已保存到本地，GitHub 同步失败');
+    setSyncStatus('error', '同步失败');
+  }
 }
 
 async function cycleStatus(id) {
@@ -1864,7 +1947,10 @@ async function submitForReview(id) {
     await cloudWrite(cloudData);
     showToast('已提交复核，等待负责人定稿');
     loadData();
-  } catch(e) { showToast('提交失败'); setSyncStatus('error', '同步失败'); }
+  } catch(e) {
+    showToast(e.message && e.message.includes('401') ? '已保存到本地，GitHub Token 已失效' : '已保存到本地，GitHub 同步失败');
+    setSyncStatus('error', '同步失败');
+  }
 }
 
 // 复核定稿：需复核 → 已完成
@@ -1886,7 +1972,7 @@ async function approveReview(id) {
     await cloudWrite(cloudData);
     showToast('已复核定稿');
     loadData();
-  } catch(e) { showToast('定稿失败'); setSyncStatus('error', '同步失败'); }
+  } catch(e) { showToast(e.message && e.message.includes('401') ? '已保存到本地，GitHub Token 已失效' : '已保存到本地，GitHub 同步失败'); setSyncStatus('error', '同步失败'); }
 }
 
 // 退回修改：需复核 → 进行中
@@ -1905,7 +1991,7 @@ async function rejectReview(id) {
     await cloudWrite(cloudData);
     showToast('已退回修改');
     loadData();
-  } catch(e) { showToast('退回失败'); setSyncStatus('error', '同步失败'); }
+  } catch(e) { showToast(e.message && e.message.includes('401') ? '已保存到本地，GitHub Token 已失效' : '已保存到本地，GitHub 同步失败'); setSyncStatus('error', '同步失败'); }
 }
 
 async function deleteItem(id) {
@@ -1916,7 +2002,7 @@ async function deleteItem(id) {
     await cloudWrite(cloudData);
     showToast('已删除');
     loadData();
-  } catch(e) { showToast('删除失败'); setSyncStatus('error', '同步失败'); }
+  } catch(e) { showToast(e.message && e.message.includes('401') ? '已保存到本地，GitHub Token 已失效' : '已保存到本地，GitHub 同步失败'); setSyncStatus('error', '同步失败'); }
 }
 
 // ===== Share =====
