@@ -149,6 +149,19 @@
       "completedAt": null,
       "note": "",
       "recorder": ""
+    },
+    {
+      "id": "item-1786188473638-mrhq5y",
+      "title": "何林鹏案件判决书跟进",
+      "assignee": "曾梓涵律师",
+      "priority": "重要",
+      "caseType": "",
+      "status": "待办",
+      "dueDate": "2026-08-10T19:27:00",
+      "createdAt": "2026-08-08T11:27:53.638Z",
+      "completedAt": null,
+      "note": "",
+      "recorder": ""
     }
   ],
   "reviews": [
@@ -163,6 +176,6 @@
     }
   ],
   "errors": [],
-  "lastUpdate": "2026-08-08T11:27:06.127Z",
+  "lastUpdate": "2026-08-08T11:27:53.638Z",
   "updatedBy": "未知用户"
 }
