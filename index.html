@@ -1707,6 +1707,7 @@ async function saveSettings() {
     closeSettings();
     showToast('设置已保存');
     refreshUI();
+    updateChangePwdVisibility();
   } catch(e) { showToast(e.message && e.message.includes('401') ? '已保存到本地，GitHub Token 已失效' : '已保存到本地，GitHub 同步失败'); setSyncStatus('error', '同步失败'); }
 }
 
@@ -2700,7 +2701,10 @@ function showSetPwdScreen() {
 function enterApp() {
   document.getElementById('loginOverlay').style.display = 'none';
   document.getElementById('appLayout').style.display = 'flex';
-  loadData().then(() => { startRealtimeListener(); });
+  loadData().then(() => {
+    startRealtimeListener();
+    updateChangePwdVisibility();
+  });
 }
 
 async function doSetPassword(e) {
@@ -2744,7 +2748,19 @@ function doLogout() {
   location.reload();
 }
 
+function updateChangePwdVisibility() {
+  const cpBtn = document.querySelector('button[onclick="openChangePwd()"]');
+  if (!cpBtn) return;
+  const mgr = (cloudData.manager || '').trim();
+  cpBtn.style.display = (currentUser && currentUser.trim() === mgr) ? '' : 'none';
+}
+
 function openChangePwd() {
+  const mgr = (cloudData.manager || '').trim();
+  if ((currentUser || '').trim() !== mgr) {
+    showToast('仅管理律师（' + mgr + '）可修改访问密码');
+    return;
+  }
   document.getElementById('changePwdModal').style.display = 'flex';
   document.getElementById('oldPwd').value = '';
   document.getElementById('newPwd1').value = '';
