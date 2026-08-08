@@ -26,12 +26,16 @@
       "assignee": "曾梓涵律师",
       "priority": "重要",
       "caseType": "合同审查",
-      "status": "待办",
+      "status": "进行中",
       "dueDate": "2026-08-10T19:21:00",
       "createdAt": "2026-08-08T11:21:24.855Z",
       "completedAt": null,
       "note": "",
-      "recorder": "刘芳律师"
+      "recorder": "刘芳律师",
+      "submittedForReviewAt": null,
+      "submittedBy": null,
+      "reviewedAt": null,
+      "reviewedBy": null
     },
     {
       "id": "item-1786188123216-h1a9id",
@@ -204,6 +208,6 @@
     }
   ],
   "errors": [],
-  "lastUpdate": "2026-08-08T12:27:00.436Z",
+  "lastUpdate": "2026-08-08T12:53:57.983Z",
   "updatedBy": "未知用户"
 }
