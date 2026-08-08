@@ -795,11 +795,128 @@ body {
   .board-view { flex-direction: column; }
   .column { min-width: auto; }
 }
+
+/* ===== Login Gate (登录校验门禁) ===== */
+.login-overlay {
+  position: fixed; inset: 0; z-index: 3000;
+  background: radial-gradient(circle at 30% 20%, #2a2d4a 0%, #1c1f2e 55%, #15172a 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+.login-card {
+  width: 380px; max-width: 90vw; padding: 42px 36px 36px;
+  background: rgba(255, 255, 255, 0.96); border-radius: 22px;
+  box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.55);
+  text-align: center; backdrop-filter: blur(12px);
+  animation: loginPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes loginPop { from { transform: scale(0.92) translateY(10px); opacity: 0; } to { transform: none; opacity: 1; } }
+.login-logo { font-size: 46px; margin-bottom: 12px; }
+.login-title { font-size: 20px; font-weight: 800; color: #1c1f2e; margin-bottom: 6px; letter-spacing: 0.5px; }
+.login-sub { font-size: 13px; color: #64748b; margin-bottom: 26px; }
+.login-tip {
+  font-size: 12.5px; color: #475569; background: #f1f5f9; padding: 11px 13px;
+  border-radius: 11px; margin-bottom: 18px; line-height: 1.65; text-align: left;
+}
+.login-form { display: flex; flex-direction: column; gap: 12px; }
+.login-input-wrap { position: relative; display: flex; align-items: center; }
+.login-input-icon { position: absolute; left: 14px; font-size: 15px; opacity: 0.55; pointer-events: none; }
+.login-input {
+  width: 100%; padding: 13px 14px 13px 40px; border: 1.5px solid #e4e7ef; border-radius: 12px;
+  font-size: 14px; outline: none; transition: all 0.2s; background: #fff; color: #1e293b;
+}
+.login-input:focus { border-color: #5b5fc7; box-shadow: 0 0 0 3px rgba(91, 95, 199, 0.12); }
+.login-btn {
+  padding: 13px; border: none; border-radius: 12px;
+  background: linear-gradient(135deg, #5b5fc7, #7c6fd6); color: #fff; font-size: 15px;
+  font-weight: 700; cursor: pointer; transition: all 0.2s; letter-spacing: 3px; margin-top: 4px;
+}
+.login-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 18px -4px rgba(91, 95, 199, 0.5); }
+.login-btn:active { transform: translateY(0); }
+.login-btn-ghost {
+  padding: 11px 20px; border: 1.5px solid #e4e7ef; border-radius: 12px; background: #fff;
+  color: #475569; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+}
+.login-btn-ghost:hover { border-color: #94a3b8; color: #1e293b; }
+.login-error { color: #dc3545; font-size: 12.5px; min-height: 16px; text-align: left; padding-left: 4px; }
+.login-modal {
+  position: fixed; inset: 0; z-index: 3100; background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.login-modal-card {
+  width: 360px; max-width: 90vw; background: #fff; border-radius: 18px; padding: 28px;
+  box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.4); animation: slideUp 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.login-modal-card h3 { font-size: 17px; margin-bottom: 18px; color: #1c1f2e; }
+.login-modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
 </style>
 </head>
 <body>
 
-<div class="app-layout">
+<!-- ===== 登录校验门禁 ===== -->
+<div id="loginOverlay" class="login-overlay">
+  <div class="login-card">
+    <div class="login-brand">
+      <div class="login-logo">⚖️</div>
+      <h1 class="login-title">刘芳律师团队日程看板</h1>
+      <p class="login-sub" id="loginSub">请输入访问密码以查看团队日程</p>
+    </div>
+
+    <!-- 登录模式 -->
+    <form id="loginForm" class="login-form" onsubmit="return doLogin(event)">
+      <div class="login-input-wrap">
+        <span class="login-input-icon">🔒</span>
+        <input type="password" id="loginPassword" class="login-input" placeholder="访问密码" autocomplete="current-password" />
+      </div>
+      <button type="submit" class="login-btn">登 录</button>
+      <div id="loginError" class="login-error"></div>
+    </form>
+
+    <!-- 首次设置密码模式 -->
+    <form id="setPwdForm" class="login-form" style="display:none;" onsubmit="return doSetPassword(event)">
+      <p class="login-tip">首次使用，请设置访问密码。<br>设置后团队所有成员都需要用此密码登录才能查看日程。</p>
+      <div class="login-input-wrap">
+        <span class="login-input-icon">🔑</span>
+        <input type="password" id="setPwd1" class="login-input" placeholder="设置访问密码（至少4位）" autocomplete="new-password" />
+      </div>
+      <div class="login-input-wrap">
+        <span class="login-input-icon">🔑</span>
+        <input type="password" id="setPwd2" class="login-input" placeholder="再次确认密码" autocomplete="new-password" />
+      </div>
+      <button type="submit" class="login-btn">设 置 密 码</button>
+      <div id="setPwdError" class="login-error"></div>
+    </form>
+  </div>
+</div>
+
+<!-- ===== 修改密码弹窗（独立于登录层，登录后可用） ===== -->
+<div id="changePwdModal" class="login-modal" style="display:none;">
+  <div class="login-modal-card">
+    <h3>修改访问密码</h3>
+    <div class="login-input-wrap">
+      <span class="login-input-icon">🔒</span>
+      <input type="password" id="oldPwd" class="login-input" placeholder="当前密码" autocomplete="current-password" />
+    </div>
+    <div class="login-input-wrap">
+      <span class="login-input-icon">🔑</span>
+      <input type="password" id="newPwd1" class="login-input" placeholder="新密码（至少4位）" autocomplete="new-password" />
+    </div>
+    <div class="login-input-wrap">
+      <span class="login-input-icon">🔑</span>
+      <input type="password" id="newPwd2" class="login-input" placeholder="再次确认新密码" autocomplete="new-password" />
+    </div>
+    <div id="changePwdError" class="login-error"></div>
+    <div class="login-modal-actions">
+      <button type="button" class="login-btn-ghost" onclick="closeChangePwd()">取消</button>
+      <button type="button" class="login-btn" onclick="doChangePwd()">确 定</button>
+    </div>
+  </div>
+</div>
+
+<div class="app-layout" id="appLayout" style="display:none">
 
 <!-- ===== 左侧导航栏 ===== -->
 <aside class="sidebar">
@@ -856,6 +973,8 @@ body {
     <span id="lastUpdate">加载中...</span>
     <button class="refresh-btn" onclick="loadData()">↻ 刷新</button>
     <button class="panel-toggle-btn" id="panelToggleBtn" onclick="toggleRightPanel()" title="收起/展开日程面板">📅 收起</button>
+    <button class="settings-btn" onclick="openChangePwd()" title="修改访问密码">🔑 改密码</button>
+    <button class="refresh-btn" onclick="doLogout()" title="退出登录">退出</button>
   </div>
 </div>
 
@@ -1331,6 +1450,7 @@ async function loadData() {
     if (!cloudData.members) cloudData.members = [];
     if (!cloudData.reviews) cloudData.reviews = [];
     if (!cloudData.errors) cloudData.errors = [];
+    if (!cloudData.config) cloudData.config = {};
     delete cloudData.auth; // 清理旧的权限控制数据
     // 首次使用：如果数据库为空（无 boardName），初始化默认看板并写回
     if (!cloudData.boardName) {
@@ -2546,10 +2666,134 @@ function showToast(msg) {
   } catch (e) {}
 })();
 
-loadData().then(() => {
-  // 数据加载完成后启动轮询同步（15秒一次，使用 API 避免缓存，多人编辑自动同步）
-  startRealtimeListener();
-});
+// ===== 登录校验门禁 =====
+let _loginHash = '';
+
+async function sha256(text) {
+  if (window.crypto && window.crypto.subtle) {
+    const data = new TextEncoder().encode(text);
+    const buf = await crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+  // 非安全上下文（本地预览）降级哈希，仅用于本地测试；线上 HTTPS 使用上面的 SHA-256
+  let h = 0;
+  for (let i = 0; i < text.length; i++) { h = (h * 31 + text.charCodeAt(i)) >>> 0; }
+  return 'fb_' + h.toString(16);
+}
+
+function showLoginScreen() {
+  document.getElementById('loginForm').style.display = 'flex';
+  document.getElementById('setPwdForm').style.display = 'none';
+  document.getElementById('loginSub').textContent = '请输入访问密码以查看团队日程';
+  document.getElementById('loginOverlay').style.display = 'flex';
+  setTimeout(() => { const el = document.getElementById('loginPassword'); if (el) el.focus(); }, 100);
+}
+
+function showSetPwdScreen() {
+  document.getElementById('loginForm').style.display = 'none';
+  document.getElementById('setPwdForm').style.display = 'flex';
+  document.getElementById('loginSub').textContent = '首次使用 · 设置访问密码';
+  document.getElementById('loginOverlay').style.display = 'flex';
+  setTimeout(() => { const el = document.getElementById('setPwd1'); if (el) el.focus(); }, 100);
+}
+
+function enterApp() {
+  document.getElementById('loginOverlay').style.display = 'none';
+  document.getElementById('appLayout').style.display = 'flex';
+  loadData().then(() => { startRealtimeListener(); });
+}
+
+async function doSetPassword(e) {
+  e.preventDefault();
+  const p1 = document.getElementById('setPwd1').value;
+  const p2 = document.getElementById('setPwd2').value;
+  const err = document.getElementById('setPwdError');
+  if (p1.length < 4) { err.textContent = '密码至少 4 位'; return false; }
+  if (p1 !== p2) { err.textContent = '两次输入不一致'; return false; }
+  err.textContent = '';
+  try {
+    const data = await cloudRead();
+    data.config = data.config || {};
+    data.config.loginHash = await sha256(p1);
+    await cloudWrite(data);
+    _loginHash = data.config.loginHash;
+    sessionStorage.setItem('board_auth', '1');
+    enterApp();
+  } catch (ex) {
+    err.textContent = '保存失败：' + (ex.message || '请检查网络');
+  }
+  return false;
+}
+
+async function doLogin(e) {
+  e.preventDefault();
+  const pwd = document.getElementById('loginPassword').value;
+  const err = document.getElementById('loginError');
+  if (await sha256(pwd) === _loginHash) {
+    sessionStorage.setItem('board_auth', '1');
+    enterApp();
+  } else {
+    err.textContent = '密码错误，请重试';
+    document.getElementById('loginPassword').value = '';
+  }
+  return false;
+}
+
+function doLogout() {
+  sessionStorage.removeItem('board_auth');
+  location.reload();
+}
+
+function openChangePwd() {
+  document.getElementById('changePwdModal').style.display = 'flex';
+  document.getElementById('oldPwd').value = '';
+  document.getElementById('newPwd1').value = '';
+  document.getElementById('newPwd2').value = '';
+  document.getElementById('changePwdError').textContent = '';
+  setTimeout(() => { const el = document.getElementById('oldPwd'); if (el) el.focus(); }, 50);
+}
+
+function closeChangePwd() {
+  document.getElementById('changePwdModal').style.display = 'none';
+}
+
+async function doChangePwd() {
+  const oldP = document.getElementById('oldPwd').value;
+  const n1 = document.getElementById('newPwd1').value;
+  const n2 = document.getElementById('newPwd2').value;
+  const err = document.getElementById('changePwdError');
+  const curHash = (cloudData.config && cloudData.config.loginHash) || '';
+  if (await sha256(oldP) !== curHash) { err.textContent = '当前密码错误'; return; }
+  if (n1.length < 4) { err.textContent = '新密码至少 4 位'; return; }
+  if (n1 !== n2) { err.textContent = '两次输入不一致'; return; }
+  err.textContent = '';
+  try {
+    cloudData.config = cloudData.config || {};
+    cloudData.config.loginHash = await sha256(n1);
+    await cloudWrite(cloudData);
+    closeChangePwd();
+    showToast('访问密码已更新');
+  } catch (ex) {
+    err.textContent = '保存失败：' + (ex.message || '请检查网络');
+  }
+}
+
+async function boot() {
+  // 同一浏览器会话内已登录，直接进（刷新不丢登录态）
+  if (sessionStorage.getItem('board_auth') === '1') { enterApp(); return; }
+  // 读取配置，判断是否需要首次设置密码
+  try {
+    const data = await cloudRead();
+    _loginHash = (data.config && data.config.loginHash) || '';
+    if (_loginHash) showLoginScreen();
+    else showSetPwdScreen();
+  } catch (ex) {
+    // 离线且无本地备份时，仍显示登录框避免白屏；离线但有备份则正常登录
+    showLoginScreen();
+  }
+}
+
+boot();
 </script>
 </body>
 </html>
