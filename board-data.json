@@ -288,6 +288,20 @@
       "note": "",
       "recorder": "",
       "hours": 0
+    },
+    {
+      "id": "item-1786198049022-8z6uzg",
+      "title": "李水源案件判决跟进",
+      "assignee": "潘奥星律师",
+      "priority": "普通",
+      "caseType": "",
+      "status": "待办",
+      "dueDate": "2026-08-14T22:07:00",
+      "createdAt": "2026-08-08T14:07:29.022Z",
+      "completedAt": null,
+      "note": "",
+      "recorder": "",
+      "hours": 0
     }
   ],
   "reviews": [
@@ -302,7 +316,7 @@
     }
   ],
   "errors": [],
-  "lastUpdate": "2026-08-08T13:16:23.010Z",
+  "lastUpdate": "2026-08-08T14:07:29.023Z",
   "updatedBy": "未知用户",
   "config": {
     "loginHash": "a75463f27244fc9b065d3c68a3af00c22f789b22e984f3ee4a5e6b49d54a987a"
