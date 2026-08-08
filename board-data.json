@@ -71,6 +71,19 @@
       "completedAt": null,
       "note": "",
       "recorder": ""
+    },
+    {
+      "id": "item-1786188290140-7hwm7q",
+      "title": "王成明案件保全解保跟进",
+      "assignee": "曾梓涵律师",
+      "priority": "重要",
+      "caseType": "",
+      "status": "待办",
+      "dueDate": "2026-08-14T19:24:00",
+      "createdAt": "2026-08-08T11:24:50.140Z",
+      "completedAt": null,
+      "note": "",
+      "recorder": ""
     }
   ],
   "reviews": [
@@ -85,6 +98,6 @@
     }
   ],
   "errors": [],
-  "lastUpdate": "2026-08-08T11:23:22.710Z",
+  "lastUpdate": "2026-08-08T11:24:50.140Z",
   "updatedBy": "未知用户"
 }
