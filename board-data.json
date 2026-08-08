@@ -245,6 +245,20 @@
       "note": "",
       "recorder": "",
       "hours": 0
+    },
+    {
+      "id": "item-1786194271870-mntgig",
+      "title": "曾秀娟案件执行异议跟进",
+      "assignee": "潘奥星律师",
+      "priority": "普通",
+      "caseType": "",
+      "status": "待办",
+      "dueDate": null,
+      "createdAt": "2026-08-08T13:04:31.870Z",
+      "completedAt": null,
+      "note": "",
+      "recorder": "",
+      "hours": 0
     }
   ],
   "reviews": [
@@ -259,6 +273,6 @@
     }
   ],
   "errors": [],
-  "lastUpdate": "2026-08-08T13:03:57.026Z",
+  "lastUpdate": "2026-08-08T13:04:31.870Z",
   "updatedBy": "未知用户"
 }
