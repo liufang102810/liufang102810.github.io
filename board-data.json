@@ -75,14 +75,14 @@
       "assignee": "刘芳律师",
       "priority": "重要",
       "caseType": "",
-      "status": "进行中",
+      "status": "需复核",
       "dueDate": "2026-08-10T19:23:00",
       "createdAt": "2026-08-08T11:23:22.710Z",
       "completedAt": null,
       "note": "",
       "recorder": "",
-      "submittedForReviewAt": null,
-      "submittedBy": null,
+      "submittedForReviewAt": "2026-08-08T12:56:10.096Z",
+      "submittedBy": "刘芳律师",
       "reviewedAt": null,
       "reviewedBy": null
     },
@@ -217,6 +217,6 @@
     }
   ],
   "errors": [],
-  "lastUpdate": "2026-08-08T12:56:04.159Z",
+  "lastUpdate": "2026-08-08T12:56:10.096Z",
   "updatedBy": "未知用户"
 }
