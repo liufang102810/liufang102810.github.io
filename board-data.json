@@ -58,6 +58,19 @@
       "completedAt": null,
       "note": "",
       "recorder": ""
+    },
+    {
+      "id": "item-1786188178217-hcjwwx",
+      "title": "罗祥红案件新证据清单",
+      "assignee": "潘奥星律师",
+      "priority": "重要",
+      "caseType": "",
+      "status": "待办",
+      "dueDate": "2026-08-14T19:22:00",
+      "createdAt": "2026-08-08T11:22:58.217Z",
+      "completedAt": null,
+      "note": "",
+      "recorder": ""
     }
   ],
   "reviews": [
@@ -72,6 +85,6 @@
     }
   ],
   "errors": [],
-  "lastUpdate": "2026-08-08T11:22:19.916Z",
+  "lastUpdate": "2026-08-08T11:22:58.217Z",
   "updatedBy": "未知用户"
 }
