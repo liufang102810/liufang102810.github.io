@@ -176,6 +176,20 @@
       "completedAt": null,
       "note": "",
       "recorder": ""
+    },
+    {
+      "id": "item-1786192020436-8dse0c",
+      "title": "行政案件SKill制作",
+      "assignee": "刘芳律师",
+      "priority": "普通",
+      "caseType": "",
+      "status": "待办",
+      "dueDate": "2026-08-14T20:26:00",
+      "createdAt": "2026-08-08T12:27:00.436Z",
+      "completedAt": null,
+      "note": "",
+      "recorder": "",
+      "hours": 0
     }
   ],
   "reviews": [
@@ -190,6 +204,6 @@
     }
   ],
   "errors": [],
-  "lastUpdate": "2026-08-08T11:40:38.704Z",
+  "lastUpdate": "2026-08-08T12:27:00.436Z",
   "updatedBy": "未知用户"
 }
