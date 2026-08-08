@@ -45,6 +45,19 @@
       "completedAt": null,
       "note": "",
       "recorder": "刘芳律师"
+    },
+    {
+      "id": "item-1786188139916-q33o72",
+      "title": "星尚案件跟进执行",
+      "assignee": "潘奥星律师",
+      "priority": "重要",
+      "caseType": "",
+      "status": "待办",
+      "dueDate": null,
+      "createdAt": "2026-08-08T11:22:19.916Z",
+      "completedAt": null,
+      "note": "",
+      "recorder": ""
     }
   ],
   "reviews": [
@@ -59,6 +72,6 @@
     }
   ],
   "errors": [],
-  "lastUpdate": "2026-08-08T11:22:03.216Z",
+  "lastUpdate": "2026-08-08T11:22:19.916Z",
   "updatedBy": "未知用户"
 }
