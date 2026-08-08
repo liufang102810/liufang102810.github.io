@@ -231,6 +231,20 @@
       "note": "",
       "recorder": "",
       "hours": 0
+    },
+    {
+      "id": "item-1786194237026-yxo20l",
+      "title": "校友会分支机构拟定",
+      "assignee": "刘芳律师",
+      "priority": "普通",
+      "caseType": "",
+      "status": "待办",
+      "dueDate": "2026-08-09T21:03:00",
+      "createdAt": "2026-08-08T13:03:57.026Z",
+      "completedAt": null,
+      "note": "",
+      "recorder": "",
+      "hours": 0
     }
   ],
   "reviews": [
@@ -245,6 +259,6 @@
     }
   ],
   "errors": [],
-  "lastUpdate": "2026-08-08T13:03:21.012Z",
+  "lastUpdate": "2026-08-08T13:03:57.026Z",
   "updatedBy": "未知用户"
 }
