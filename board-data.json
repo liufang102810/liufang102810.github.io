@@ -1,10 +1,14 @@
 {
   "boardName": "刘芳律师团队蒸蒸日上日程看板",
-  "members": ["刘芳律师", "曾梓涵律师", "潘奥星律师"],
+  "members": [
+    "刘芳律师",
+    "曾梓涵律师",
+    "潘奥星律师"
+  ],
   "manager": "刘芳律师",
   "items": [],
   "reviews": [],
   "errors": [],
-  "lastUpdate": "2026-07-31T08:45:00.000Z",
-  "updatedBy": "系统初始化"
+  "lastUpdate": "2026-08-08T10:25:00.000Z",
+  "updatedBy": "系统更新"
 }
