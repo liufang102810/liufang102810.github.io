@@ -796,6 +796,77 @@ body {
   .column { min-width: auto; }
 }
 
+/* ===== 手机/平板：日程面板改为右侧滑入抽屉 + 底部导航 ===== */
+.mobile-bottom-nav { display: none; }
+.panel-backdrop { display: none; }
+@media (max-width: 1150px) {
+  /* 平板/手机下，把"日程与提醒"做成从右滑入的抽屉 */
+  .right-panel {
+    display: block !important;
+    position: fixed; top: 0; right: 0; height: 100vh;
+    width: 86%; max-width: 360px; z-index: 600;
+    transform: translateX(100%);
+    transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+    border-left: 1px solid var(--border);
+    box-shadow: -10px 0 40px rgba(26, 29, 41, 0.18);
+    padding-bottom: 48px;
+  }
+  body.mobile-panel-open .right-panel { transform: translateX(0); }
+  .panel-backdrop {
+    display: none; position: fixed; inset: 0;
+    background: rgba(15, 18, 30, 0.42); z-index: 550;
+    backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px);
+  }
+  body.mobile-panel-open .panel-backdrop { display: block; }
+  .panel-reopen-tab { display: none !important; }
+}
+@media (max-width: 768px) {
+  .header { padding: 11px 16px; }
+  .header h1 { font-size: 17px; }
+  .header h1 .icon { font-size: 18px; margin-right: 6px; }
+  #lastUpdate, .sync-status { display: none; }
+  .header-right { gap: 7px; }
+  .share-banner { padding: 8px 16px; }
+  .share-banner .share-text { font-size: 11.5px; }
+  .greeting-bar { padding: 12px 16px 2px; }
+  .greeting-text { font-size: 18px; }
+  .stats-bar {
+    padding: 12px 16px 6px; display: grid;
+    grid-template-columns: repeat(2, 1fr); gap: 9px;
+  }
+  .stat-card { min-width: 0; padding: 12px 14px; }
+  .stat-card .stat-icon { display: none; }
+  .stat-card .num { font-size: 22px; }
+  .overdue-banner, .quick-add, .toolbar, .board-view, .list-view, .member-view { padding-left: 16px; padding-right: 16px; }
+  .quick-add { gap: 8px; }
+  .quick-add input[type="text"] { min-width: 100%; order: -1; }
+  .quick-add button { width: 100%; }
+  .content-scroll { padding-bottom: 74px; }
+  .board-view { flex-direction: column; }
+  .column { min-width: auto; }
+  .login-card { padding: 30px 22px; }
+  .login-card input, .login-card button { font-size: 16px; }
+  .modal { padding: 24px 18px; }
+
+  /* 手机端底部导航栏 */
+  .mobile-bottom-nav {
+    display: flex; position: fixed; bottom: 0; left: 0; right: 0;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(18px) saturate(1.4); -webkit-backdrop-filter: blur(18px) saturate(1.4);
+    border-top: 1px solid var(--border); z-index: 400;
+    padding: 5px 2px calc(6px + env(safe-area-inset-bottom));
+    box-shadow: 0 -4px 24px rgba(26, 29, 41, 0.08);
+  }
+  .mobile-nav-item {
+    flex: 1; background: none; border: none; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    padding: 5px 1px; border-radius: 10px; color: var(--text-light);
+    font-size: 10px; font-weight: 500; transition: all 0.15s; line-height: 1.1;
+  }
+  .mobile-nav-item .mni-icon { font-size: 18px; }
+  .mobile-nav-item.active { color: var(--primary-dark); background: rgba(91, 95, 199, 0.09); }
+}
+
 /* ===== Login Gate (登录校验门禁) ===== */
 .login-overlay {
   position: fixed; inset: 0; z-index: 3000;
@@ -1099,6 +1170,34 @@ body {
 
 <!-- 折叠状态下浮在右边缘的"展开"标签 -->
 <button class="panel-reopen-tab" id="panelReopenTab" onclick="toggleRightPanel()" title="展开日程面板">📅 日程</button>
+
+<!-- 移动端抽屉遮罩 -->
+<div class="panel-backdrop" id="panelBackdrop" onclick="closeMobilePanel()"></div>
+
+<!-- 手机端底部导航 -->
+<nav class="mobile-bottom-nav" id="mobileBottomNav">
+  <button class="mobile-nav-item active" data-view="board" onclick="switchView('board')">
+    <span class="mni-icon">📋</span><span class="mni-label">看板</span>
+  </button>
+  <button class="mobile-nav-item" data-view="calendar" onclick="switchView('calendar')">
+    <span class="mni-icon">📅</span><span class="mni-label">日历</span>
+  </button>
+  <button class="mobile-nav-item" data-view="list" onclick="switchView('list')">
+    <span class="mni-icon">📝</span><span class="mni-label">列表</span>
+  </button>
+  <button class="mobile-nav-item" data-view="member" onclick="switchView('member')">
+    <span class="mni-icon">👥</span><span class="mni-label">成员</span>
+  </button>
+  <button class="mobile-nav-item" data-view="review" onclick="switchView('review')">
+    <span class="mni-icon">📊</span><span class="mni-label">复盘</span>
+  </button>
+  <button class="mobile-nav-item" data-view="error" onclick="switchView('error')">
+    <span class="mni-icon">💡</span><span class="mni-label">经验</span>
+  </button>
+  <button class="mobile-nav-item" data-action="settings" onclick="openSettings()">
+    <span class="mni-icon">⚙</span><span class="mni-label">设置</span>
+  </button>
+</nav>
 
 </div><!-- end .app-layout -->
 
@@ -1793,10 +1892,12 @@ function getFilteredItems() {
 // ===== View Switching =====
 function switchView(view) {
   currentView = view;
-  // 更新左侧导航栏高亮
-  document.querySelectorAll('.nav-item[data-view]').forEach(n => {
+  // 更新左侧导航栏 + 手机端底部导航高亮
+  document.querySelectorAll('.nav-item[data-view], .mobile-nav-item[data-view]').forEach(n => {
     n.classList.toggle('active', n.dataset.view === view);
   });
+  // 切换视图时关闭手机端抽屉（若打开）
+  if (document.body.classList.contains('mobile-panel-open')) closeMobilePanel();
   // 更新 tab 栏（隐藏的，保持兼容）
   const allViews = ['board','calendar','list','member','review','error'];
   document.querySelectorAll('.tab').forEach((t, i) => {
@@ -1822,13 +1923,29 @@ function switchView(view) {
 }
 
 // ===== 收起/展开右侧"日程与提醒"面板 =====
+// 桌面(>1150px)：列收起；平板/手机(<=1150px)：右侧滑入抽屉
 function toggleRightPanel() {
-  const layout = document.querySelector('.app-layout');
-  const collapsed = layout.classList.toggle('panel-collapsed');
+  const isDrawer = window.matchMedia('(max-width: 1150px)').matches;
   const btn = document.getElementById('panelToggleBtn');
-  if (btn) btn.textContent = collapsed ? '📅 展开' : '📅 收起';
-  // 记住偏好
-  try { localStorage.setItem('panel_collapsed', collapsed ? '1' : '0'); } catch (e) {}
+  if (isDrawer) {
+    const open = document.body.classList.toggle('mobile-panel-open');
+    const bd = document.getElementById('panelBackdrop');
+    if (bd) bd.style.display = open ? 'block' : 'none';
+    if (btn) btn.textContent = open ? '📅 关闭' : '📅 日程';
+    try { localStorage.setItem('panel_collapsed', open ? '1' : '0'); } catch (e) {}
+  } else {
+    const layout = document.querySelector('.app-layout');
+    const collapsed = layout.classList.toggle('panel-collapsed');
+    if (btn) btn.textContent = collapsed ? '📅 展开' : '📅 收起';
+    try { localStorage.setItem('panel_collapsed', collapsed ? '1' : '0'); } catch (e) {}
+  }
+}
+function closeMobilePanel() {
+  document.body.classList.remove('mobile-panel-open');
+  const bd = document.getElementById('panelBackdrop');
+  if (bd) bd.style.display = 'none';
+  const btn = document.getElementById('panelToggleBtn');
+  if (btn) btn.textContent = '📅 日程';
 }
 
 // ===== Render =====
@@ -2659,10 +2776,15 @@ function showToast(msg) {
 // 恢复"日程与提醒"面板的收起/展开偏好
 (function restorePanelState() {
   try {
-    if (localStorage.getItem('panel_collapsed') === '1') {
-      document.querySelector('.app-layout').classList.add('panel-collapsed');
-      const btn = document.getElementById('panelToggleBtn');
-      if (btn) btn.textContent = '📅 展开';
+    const collapsed = localStorage.getItem('panel_collapsed') === '1';
+    const isDrawer = window.matchMedia('(max-width: 1150px)').matches;
+    const btn = document.getElementById('panelToggleBtn');
+    if (isDrawer) {
+      // 抽屉模式：默认收起，按钮文案为"打开"
+      if (btn) btn.textContent = '📅 日程';
+    } else {
+      if (collapsed) document.querySelector('.app-layout').classList.add('panel-collapsed');
+      if (btn) btn.textContent = collapsed ? '📅 展开' : '📅 收起';
     }
   } catch (e) {}
 })();
