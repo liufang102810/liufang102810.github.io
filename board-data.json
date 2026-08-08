@@ -217,6 +217,20 @@
       "note": "",
       "recorder": "",
       "hours": 0
+    },
+    {
+      "id": "item-1786194201012-1xxppp",
+      "title": "王成明案件归档（撤诉裁定拿到后、解除保全裁定拿到后）",
+      "assignee": "曾梓涵律师",
+      "priority": "普通",
+      "caseType": "",
+      "status": "待办",
+      "dueDate": null,
+      "createdAt": "2026-08-08T13:03:21.012Z",
+      "completedAt": null,
+      "note": "",
+      "recorder": "",
+      "hours": 0
     }
   ],
   "reviews": [
@@ -231,6 +245,6 @@
     }
   ],
   "errors": [],
-  "lastUpdate": "2026-08-08T13:01:17.832Z",
+  "lastUpdate": "2026-08-08T13:03:21.012Z",
   "updatedBy": "未知用户"
 }
