@@ -259,6 +259,20 @@
       "note": "",
       "recorder": "",
       "hours": 0
+    },
+    {
+      "id": "item-1786194301959-f8lsyu",
+      "title": "沈卓之变更抚养权二审判决书跟进",
+      "assignee": "潘奥星律师",
+      "priority": "普通",
+      "caseType": "",
+      "status": "待办",
+      "dueDate": null,
+      "createdAt": "2026-08-08T13:05:01.959Z",
+      "completedAt": null,
+      "note": "",
+      "recorder": "",
+      "hours": 0
     }
   ],
   "reviews": [
@@ -273,6 +287,6 @@
     }
   ],
   "errors": [],
-  "lastUpdate": "2026-08-08T13:04:31.870Z",
+  "lastUpdate": "2026-08-08T13:05:01.959Z",
   "updatedBy": "未知用户"
 }
