@@ -162,6 +162,19 @@
       "completedAt": null,
       "note": "",
       "recorder": ""
+    },
+    {
+      "id": "item-1786188516999-v93df0",
+      "title": "拉姐四案保全跟进、全套证据完善",
+      "assignee": "潘奥星律师",
+      "priority": "重要",
+      "caseType": "",
+      "status": "待办",
+      "dueDate": "2026-08-14T19:28:00",
+      "createdAt": "2026-08-08T11:28:36.999Z",
+      "completedAt": null,
+      "note": "",
+      "recorder": ""
     }
   ],
   "reviews": [
@@ -176,6 +189,6 @@
     }
   ],
   "errors": [],
-  "lastUpdate": "2026-08-08T11:27:53.638Z",
+  "lastUpdate": "2026-08-08T11:28:37.000Z",
   "updatedBy": "未知用户"
 }
