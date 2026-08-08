@@ -32,6 +32,19 @@
       "completedAt": null,
       "note": "",
       "recorder": "刘芳律师"
+    },
+    {
+      "id": "item-1786188123216-h1a9id",
+      "title": "劳动争议案件接案方案",
+      "assignee": "潘奥星律师",
+      "priority": "重要",
+      "caseType": "",
+      "status": "待办",
+      "dueDate": "2026-08-10T19:21:00",
+      "createdAt": "2026-08-08T11:22:03.216Z",
+      "completedAt": null,
+      "note": "",
+      "recorder": "刘芳律师"
     }
   ],
   "reviews": [
@@ -46,6 +59,6 @@
     }
   ],
   "errors": [],
-  "lastUpdate": "2026-08-08T11:21:24.855Z",
+  "lastUpdate": "2026-08-08T11:22:03.216Z",
   "updatedBy": "未知用户"
 }
