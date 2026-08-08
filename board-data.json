@@ -19,6 +19,19 @@
       "completedAt": null,
       "note": "",
       "recorder": "刘芳律师"
+    },
+    {
+      "id": "item-1786188084855-u5w3up",
+      "title": "金山合同审核",
+      "assignee": "曾梓涵律师",
+      "priority": "重要",
+      "caseType": "合同审查",
+      "status": "待办",
+      "dueDate": "2026-08-10T19:21:00",
+      "createdAt": "2026-08-08T11:21:24.855Z",
+      "completedAt": null,
+      "note": "",
+      "recorder": "刘芳律师"
     }
   ],
   "reviews": [
@@ -33,6 +46,6 @@
     }
   ],
   "errors": [],
-  "lastUpdate": "2026-08-08T11:21:04.815Z",
+  "lastUpdate": "2026-08-08T11:21:24.855Z",
   "updatedBy": "未知用户"
 }
