@@ -84,6 +84,19 @@
       "completedAt": null,
       "note": "",
       "recorder": ""
+    },
+    {
+      "id": "item-1786188310009-zmzpv2",
+      "title": "陈雪案件持续完善证据",
+      "assignee": "曾梓涵律师",
+      "priority": "重要",
+      "caseType": "",
+      "status": "待办",
+      "dueDate": null,
+      "createdAt": "2026-08-08T11:25:10.009Z",
+      "completedAt": null,
+      "note": "",
+      "recorder": ""
     }
   ],
   "reviews": [
@@ -98,6 +111,6 @@
     }
   ],
   "errors": [],
-  "lastUpdate": "2026-08-08T11:24:50.140Z",
+  "lastUpdate": "2026-08-08T11:25:10.009Z",
   "updatedBy": "未知用户"
 }
