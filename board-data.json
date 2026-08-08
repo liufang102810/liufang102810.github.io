@@ -6,7 +6,21 @@
     "潘奥星律师"
   ],
   "manager": "刘芳律师",
-  "items": [],
+  "items": [
+    {
+      "id": "item-1786188064815-7hclon",
+      "title": "金山招聘合同复核",
+      "assignee": "刘芳律师",
+      "priority": "普通",
+      "caseType": "合同审查",
+      "status": "待办",
+      "dueDate": "2026-08-09T19:21:00",
+      "createdAt": "2026-08-08T11:21:04.815Z",
+      "completedAt": null,
+      "note": "",
+      "recorder": "刘芳律师"
+    }
+  ],
   "reviews": [
     {
       "id": "rev-1786185424140-vv34me",
@@ -19,6 +33,6 @@
     }
   ],
   "errors": [],
-  "lastUpdate": "2026-08-08T11:20:28.462Z",
+  "lastUpdate": "2026-08-08T11:21:04.815Z",
   "updatedBy": "未知用户"
 }
