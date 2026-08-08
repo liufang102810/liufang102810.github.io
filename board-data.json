@@ -7,8 +7,18 @@
   ],
   "manager": "刘芳律师",
   "items": [],
-  "reviews": [],
+  "reviews": [
+    {
+      "id": "rev-1786185424140-vv34me",
+      "author": "刘芳律师",
+      "date": "2026-08-08",
+      "mood": "normal",
+      "content": "ff",
+      "createdAt": "2026-08-08T10:37:04.140Z",
+      "updatedAt": null
+    }
+  ],
   "errors": [],
-  "lastUpdate": "2026-08-08T10:34:59.272Z",
+  "lastUpdate": "2026-08-08T10:37:04.140Z",
   "updatedBy": "未知用户"
 }
