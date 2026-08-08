@@ -444,6 +444,20 @@ body {
   border-color: var(--primary); 
 }
 
+/* ===== Hours Tag ===== */
+.card-hours { 
+  display: inline-flex; 
+  align-items: center; 
+  gap: 2px; 
+  background: #eff6ff; 
+  color: #2563eb; 
+  border: 1px solid #bfdbfe; 
+  border-radius: 6px; 
+  padding: 1px 7px; 
+  font-size: 12px; 
+  font-weight: 600; 
+}
+
 /* ===== Empty State ===== */
 .empty-state { text-align: center; padding: 80px 20px; color: var(--text-light); }
 .empty-state .big-icon { font-size: 48px; margin-bottom: 16px; }
@@ -634,6 +648,7 @@ body {
     <option value="其他">其他</option>
   </select>
   <input type="datetime-local" id="quickDue">
+  <input type="number" id="quickHours" placeholder="工时(h)" min="0" step="0.5" style="width:90px;padding:8px;border:1px solid var(--border);border-radius:8px;font-size:13px;">
   <select id="quickRecorder"><option value="">录入人</option></select>
   <button onclick="quickAdd()">添加</button>
 </div>
@@ -729,6 +744,11 @@ body {
     <div class="modal-field">
       <label>截止时间</label>
       <input type="datetime-local" id="editDue" style="width:100%;">
+    </div>
+    <div class="modal-field">
+      <label>花费工时（小时）</label>
+      <input type="number" id="editHours" min="0" step="0.5" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;" placeholder="如 2.5 表示 2.5 小时">
+      <div class="hint">记录该负责人在此事项上花费的时间，将在成员视图汇总</div>
     </div>
     <div class="modal-field">
       <label>事项状态</label>
@@ -1171,6 +1191,7 @@ function openEdit(id) {
   document.getElementById('editPriority').value = item.priority || '普通';
   document.getElementById('editCaseType').value = item.caseType || '';
   document.getElementById('editNote').value = item.note || '';
+  document.getElementById('editHours').value = item.hours || '';
   document.getElementById('editStatus').value = item.status || '待办';
   const names = getMemberNames();
   const assigneeSel = document.getElementById('editAssignee');
@@ -1196,6 +1217,7 @@ async function saveEdit() {
   const caseType = document.getElementById('editCaseType').value;
   const dueInput = document.getElementById('editDue').value;
   const note = document.getElementById('editNote').value;
+  const hours = parseFloat(document.getElementById('editHours').value) || 0;
   const newStatus = document.getElementById('editStatus').value;
   if (!title) { showToast('标题不能为空'); return; }
   if (!assignee) { showToast('请选择负责人'); return; }
@@ -1209,6 +1231,7 @@ async function saveEdit() {
   item.caseType = caseType;
   item.dueDate = dueDate;
   item.note = note;
+  item.hours = hours;
   // 处理状态变更
   if (newStatus !== item.status) {
     item.status = newStatus;
@@ -1316,6 +1339,11 @@ function recorderTag(item) {
   return `<span class="card-recorder">✎ ${esc(item.recorder)}</span>`;
 }
 
+function formatHours(h) {
+  if (!h || h <= 0) return '0h';
+  return (Number.isInteger(h) ? h : h.toFixed(1)) + 'h';
+}
+
 function cardActions(item) {
   let buttons = '';
   buttons += `<button onclick="openEdit('${item.id}')">✏ 编辑</button>`;
@@ -1352,11 +1380,13 @@ function renderCard(item, hideAssignee) {
     reviewComment = `<div class="card-review-comment">💬 复核意见：${esc(item.reviewComment)}</div>`;
   }
   const caseTypeTag = item.caseType ? `<span class="case-type-tag ${item.caseType}">${item.caseType}</span>` : '';
+  const hoursTag = item.hours ? `<span class="card-hours">⏱ ${formatHours(item.hours)}</span>` : '';
   return `<div class="card priority-${item.priority} ${reviewClass} ${overdueClass}">
     <div class="card-title">${esc(item.title)}</div>
     <div class="card-meta">
       ${priorityTag(item.priority)}
       ${caseTypeTag}
+      ${hoursTag}
       ${hideAssignee ? '' : `<span class="card-assignee">@${esc(item.assignee)}</span>`}
       ${recorderTag(item)}
       ${dueInfo(item.dueDate, item.status)}
@@ -1447,6 +1477,7 @@ function renderList(items) {
         ${priorityTag(i.priority)}
         ${i.caseType ? `<span class="case-type-tag ${i.caseType}">${i.caseType}</span>` : ''}
         <span class="card-assignee">@${esc(i.assignee)}</span>
+        ${i.hours ? `<span class="card-hours">⏱ ${formatHours(i.hours)}</span>` : ''}
         ${i.recorder ? `<span class="card-recorder">✎ ${esc(i.recorder)}</span>` : ''}
         <span class="list-item-title">${esc(i.title)}</span>
         ${dueInfo(i.dueDate, i.status)}
@@ -1486,11 +1517,13 @@ function renderMember(items) {
     const rate = total > 0 ? Math.round(done / total * 100) : 0;
     const now = new Date();
     const overdue = tasks.filter(t => t.dueDate && t.status !== '已完成' && new Date(t.dueDate) < now).length;
+    const totalHours = tasks.reduce((s, t) => s + (parseFloat(t.hours) || 0), 0);
     return `<div class="member-card">
       <div class="member-card-header">
         <span class="member-name">${esc(name)}</span>
         <div class="member-stats">
           <span>总计 <b>${total}</b></span>
+          <span>工时 <b>${formatHours(totalHours)}</b></span>
           <span>待办 <b>${todo}</b></span>
           <span>进行中 <b>${prog}</b></span>
           ${review > 0 ? `<span style="color:var(--review-border);font-weight:700;">需复核 ${review}</span>` : ''}
@@ -1911,6 +1944,8 @@ async function quickAdd() {
   const caseType = document.getElementById('quickCaseType').value;
   const dueInput = document.getElementById('quickDue').value;
   let recorder = document.getElementById('quickRecorder').value;
+  const hoursInput = document.getElementById('quickHours').value;
+  const hours = hoursInput ? parseFloat(hoursInput) : 0;
   if (!title) { showToast('请输入事项标题'); return; }
   if (!assignee) { showToast('请选择负责人'); return; }
   if (!recorder) recorder = currentUser || '';
@@ -1926,6 +1961,7 @@ async function quickAdd() {
     completedAt: null,
     note: '',
     recorder,
+    hours: hours || 0,
   };
   cloudData.items.push(newItem);
   setSyncStatus('syncing', '添加中...');
@@ -1934,6 +1970,7 @@ async function quickAdd() {
     document.getElementById('quickTitle').value = '';
     document.getElementById('quickDue').value = '';
     document.getElementById('quickCaseType').value = '';
+    document.getElementById('quickHours').value = '';
     showToast('已添加');
     refreshUI();
   } catch(e) {
